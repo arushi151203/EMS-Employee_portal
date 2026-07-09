@@ -1,0 +1,27 @@
+body{
+background:#f5f7fb;
+font-family:Arial, sans-serif;
+}
+
+.stat-card{
+border:none;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.course-card{
+border:none;
+border-radius:15px;
+overflow:hidden;
+transition:.3s;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.course-card:hover{
+transform:translateY(-8px);
+}
+
+.progress{
+height:20px;
+border-radius:10px;
+}
