@@ -39,7 +39,8 @@ input, select, textarea {
 
 .app-shell {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .main-area {
@@ -47,11 +48,13 @@ input, select, textarea {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 }
 
 .page-content {
   padding: 28px 32px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .card {
