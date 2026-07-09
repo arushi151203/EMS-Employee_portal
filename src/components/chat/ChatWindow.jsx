@@ -1,21 +1,24 @@
 import "./ChatWindow.css";
-import { useEffect, useRef } from "react";
-import { FiSearch, FiMoreVertical } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
+import { FiMoreVertical } from "react-icons/fi";
 
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
+import ChatMenu from "./ChatMenu";
+import ClearChatModal from "./ClearChatModal";
 
 function ChatWindow({
   selectedContact,
   messages,
-  contacts,
-  setContacts,
-  setSelectedContact,
   sendMessage,
+  clearConversation,
 }) {
   const chatMessages = messages[selectedContact.id] || [];
 
   const bottomRef = useRef(null);
+
+  const [showMenu, setShowMenu] = useState(false);
+  const [showClearModal, setShowClearModal] = useState(false);
 
   // Auto Scroll
   useEffect(() => {
@@ -24,33 +27,11 @@ function ChatWindow({
     });
   }, [chatMessages]);
 
-  // Mark messages as read
-  useEffect(() => {
-    const updatedContacts = contacts.map((contact) => {
-      if (contact.id === selectedContact.id) {
-        return {
-          ...contact,
-          unread: 0,
-        };
-      }
-      return contact;
-    });
-
-    setContacts(updatedContacts);
-
-    const updatedSelected = updatedContacts.find(
-      (contact) => contact.id === selectedContact.id
-    );
-
-    if (updatedSelected) {
-      setSelectedContact(updatedSelected);
-    }
-  }, [selectedContact.id]);
-
   return (
     <div className="chat-window">
 
       {/* Header */}
+
       <div className="chat-window-header">
 
         <div className="chat-user">
@@ -73,11 +54,9 @@ function ChatWindow({
 
         <div className="header-icons">
 
-          <button>
-            <FiSearch />
-          </button>
-
-          <button>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+          >
             <FiMoreVertical />
           </button>
 
@@ -85,25 +64,64 @@ function ChatWindow({
 
       </div>
 
+      {/* Three Dot Menu */}
+
+      <ChatMenu
+        showMenu={showMenu}
+        onClearChat={() => {
+          setShowMenu(false);
+          setShowClearModal(true);
+        }}
+      />
+
+      {/* Clear Chat Modal */}
+
+      <ClearChatModal
+        show={showClearModal}
+        onCancel={() => setShowClearModal(false)}
+        onConfirm={() => {
+          clearConversation();
+          setShowClearModal(false);
+        }}
+      />
+
       {/* Messages */}
+
       <div className="messages-area">
 
         <div className="today">
           Today
         </div>
 
-        {chatMessages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-          />
-        ))}
+        {chatMessages.length === 0 ? (
+
+          <div
+            style={{
+              color: "#94a3b8",
+              textAlign: "center",
+              marginTop: "40px",
+            }}
+          >
+            No messages yet
+          </div>
+
+        ) : (
+
+          chatMessages.map((message) => (
+            <MessageBubble
+              key={message.id}
+              message={message}
+            />
+          ))
+
+        )}
 
         <div ref={bottomRef}></div>
 
       </div>
 
-      {/* Message Input */}
+      {/* Input */}
+
       <MessageInput
         sendMessage={sendMessage}
       />

@@ -10,7 +10,6 @@
 
 .contact-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 22px;
   border-bottom: 1px solid #1f2937;
@@ -19,21 +18,6 @@
 .contact-header h2 {
   font-size: 22px;
   font-weight: 600;
-}
-
-.icon-btn {
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 12px;
-  background: #1f2937;
-  color: white;
-  cursor: pointer;
-  transition: .25s;
-}
-
-.icon-btn:hover {
-  background: #334155;
 }
 
 /* Search */
@@ -77,7 +61,7 @@
   padding: 8px 12px 20px;
 }
 
-/* Card */
+/* Contact Card */
 
 .contact-card {
   display: flex;
@@ -117,18 +101,25 @@
   color: white;
 }
 
-.online-dot {
+.status-dot {
   position: absolute;
   right: 2px;
   bottom: 2px;
   width: 12px;
   height: 12px;
-  background: #22c55e;
-  border: 2px solid #111827;
   border-radius: 50%;
+  border: 2px solid #111827;
 }
 
-/* Info */
+.online {
+  background: #22c55e;
+}
+
+.offline {
+  background: #64748b;
+}
+
+/* Contact Info */
 
 .contact-content {
   flex: 1;
@@ -151,6 +142,13 @@
   color: #94a3b8;
 }
 
+.contact-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
 .contact-content p {
   color: #94a3b8;
   font-size: 14px;
@@ -159,47 +157,26 @@
   text-overflow: ellipsis;
 }
 
-.status-dot{
-    position:absolute;
-    bottom:2px;
-    right:2px;
-    width:12px;
-    height:12px;
-    border-radius:50%;
-    border:2px solid #111827;
+/* Unread Badge */
+
+.unread-badge {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 6px;
+  font-weight: 600;
 }
 
-.online{
-    background:#22c55e;
-}
+/* Empty Search */
 
-.offline{
-    background:#64748b;
-}
-
-.contact-bottom{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-}
-
-.unread-badge{
-    min-width:20px;
-    height:20px;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
-    font-size:11px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:0 6px;
-    font-weight:600;
-}
-
-.empty-search{
-    text-align:center;
-    color:#94a3b8;
-    margin-top:40px;
+.empty-search {
+  text-align: center;
+  color: #94a3b8;
+  margin-top: 40px;
 }

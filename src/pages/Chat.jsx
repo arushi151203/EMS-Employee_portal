@@ -16,19 +16,47 @@ function Chat() {
 
   const [messages, setMessages] = useState(initialMessages);
 
-  // Send message
+  // Open Chat
+  const openChat = (contact) => {
+    const updatedContacts = contacts.map((c) =>
+      c.id === contact.id
+        ? {
+            ...c,
+            unread: 0,
+          }
+        : c
+    );
+
+    const selected = updatedContacts.find(
+      (c) => c.id === contact.id
+    );
+
+    const reordered = [
+      selected,
+      ...updatedContacts.filter(
+        (c) => c.id !== contact.id
+      ),
+    ];
+
+    setContacts(reordered);
+    setSelectedContact(selected);
+  };
+
+  // Send Message
   const sendMessage = (text) => {
-    const currentTime = new Date().toLocaleTimeString([], {
+    if (!text.trim()) return;
+
+    const time = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
 
     const newMessage = {
       id: Date.now(),
-      type: "sent",
       text,
-      time: currentTime,
-      status: "read",
+      type: "sent",
+      time,
+      status: "seen",
     };
 
     setMessages((prev) => ({
@@ -42,90 +70,68 @@ function Chat() {
     const updatedContact = {
       ...selectedContact,
       lastMessage: text,
-      time: currentTime,
+      time,
       unread: 0,
     };
 
-    const updatedContacts = [
+    const reordered = [
       updatedContact,
       ...contacts.filter(
-        (contact) => contact.id !== selectedContact.id
+        (c) => c.id !== selectedContact.id
       ),
     ];
 
-    setContacts(updatedContacts);
+    setContacts(reordered);
     setSelectedContact(updatedContact);
   };
 
-  // Receive message
-  const receiveMessage = (contactId, text) => {
-    const currentTime = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    const newMessage = {
-      id: Date.now(),
-      type: "received",
-      text,
-      time: currentTime,
-    };
-
+  // Clear Current Conversation
+  const clearConversation = () => {
     setMessages((prev) => ({
       ...prev,
-      [contactId]: [
-        ...(prev[contactId] || []),
-        newMessage,
-      ],
+      [selectedContact.id]: [],
     }));
 
-    const updatedContacts = contacts.map((contact) => {
-      if (contact.id !== contactId) return contact;
+    const updatedContact = {
+      ...selectedContact,
+      lastMessage: "",
+      time: "",
+      unread: 0,
+    };
 
-      return {
-        ...contact,
-        lastMessage: text,
-        time: currentTime,
-        unread:
-          selectedContact.id === contactId
-            ? 0
-            : contact.unread + 1,
-      };
-    });
-
-    const activeContact = updatedContacts.find(
-      (contact) => contact.id === contactId
+    setContacts((prev) =>
+      prev.map((c) =>
+        c.id === selectedContact.id ? updatedContact : c
+      )
     );
 
-    setContacts([
-      activeContact,
-      ...updatedContacts.filter(
-        (contact) => contact.id !== contactId
-      ),
-    ]);
+    setSelectedContact(updatedContact);
   };
 
   return (
     <div className="chat-page">
+
       <aside className="left-panel">
+
         <ContactList
           contacts={contacts}
           selectedContact={selectedContact}
-          setSelectedContact={setSelectedContact}
+          setSelectedContact={openChat}
         />
+
       </aside>
 
       <main className="right-panel">
+
         <ChatWindow
           selectedContact={selectedContact}
           messages={messages}
-          contacts={contacts}
-          setContacts={setContacts}
-          setSelectedContact={setSelectedContact}
           sendMessage={sendMessage}
-          receiveMessage={receiveMessage}
+          clearConversation={clearConversation}
         />
+
       </main>
+
     </div>
   );
 }
