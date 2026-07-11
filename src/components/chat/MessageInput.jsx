@@ -21,13 +21,23 @@ function MessageInput({ sendMessage }) {
   const handleSend = () => {
     if (!text.trim() && !selectedFile) return;
 
-    let finalMessage = text;
-
+    // Send File
     if (selectedFile) {
-      finalMessage += ` 📎 ${selectedFile.name}`;
+      sendMessage({
+        messageType: "file",
+        fileName: selectedFile.name,
+        fileType: selectedFile.type,
+        fileUrl: URL.createObjectURL(selectedFile),
+      });
     }
 
-    sendMessage(finalMessage.trim());
+    // Send Text
+    if (text.trim()) {
+      sendMessage({
+        messageType: "text",
+        text: text.trim(),
+      });
+    }
 
     setText("");
     setSelectedFile(null);
@@ -61,9 +71,7 @@ function MessageInput({ sendMessage }) {
             📎 {selectedFile.name}
           </span>
 
-          <button
-            onClick={() => setSelectedFile(null)}
-          >
+          <button onClick={() => setSelectedFile(null)}>
             <FiX />
           </button>
 
@@ -78,9 +86,7 @@ function MessageInput({ sendMessage }) {
 
           <button
             className="action-btn"
-            onClick={() =>
-              setShowEmoji(!showEmoji)
-            }
+            onClick={() => setShowEmoji(!showEmoji)}
           >
             <FiSmile />
           </button>
@@ -119,9 +125,7 @@ function MessageInput({ sendMessage }) {
           <input
             value={text}
             placeholder="Type a message..."
-            onChange={(e) =>
-              setText(e.target.value)
-            }
+            onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSend();

@@ -42,22 +42,43 @@ function Chat() {
     setSelectedContact(selected);
   };
 
-  // Send Message
-  const sendMessage = (text) => {
-    if (!text.trim()) return;
-
+  // Send Message (Text + File)
+  const sendMessage = (data) => {
     const time = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
 
-    const newMessage = {
-      id: Date.now(),
-      text,
-      type: "sent",
-      time,
-      status: "seen",
-    };
+    let newMessage;
+    let lastMessage;
+
+    if (data.messageType === "text") {
+      if (!data.text.trim()) return;
+
+      newMessage = {
+        id: Date.now(),
+        type: "sent",
+        messageType: "text",
+        text: data.text,
+        time,
+        status: "read",
+      };
+
+      lastMessage = data.text;
+    } else {
+      newMessage = {
+        id: Date.now(),
+        type: "sent",
+        messageType: "file",
+        fileName: data.fileName,
+        fileType: data.fileType,
+        fileUrl: data.fileUrl,
+        time,
+        status: "read",
+      };
+
+      lastMessage = `📎 ${data.fileName}`;
+    }
 
     setMessages((prev) => ({
       ...prev,
@@ -69,7 +90,7 @@ function Chat() {
 
     const updatedContact = {
       ...selectedContact,
-      lastMessage: text,
+      lastMessage,
       time,
       unread: 0,
     };
@@ -101,7 +122,9 @@ function Chat() {
 
     setContacts((prev) =>
       prev.map((c) =>
-        c.id === selectedContact.id ? updatedContact : c
+        c.id === selectedContact.id
+          ? updatedContact
+          : c
       )
     );
 

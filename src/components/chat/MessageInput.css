@@ -241,3 +241,17 @@
     color:white;
 
 }
+
+.file-message{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:600;
+    word-break:break-word;
+}
+
+.file-message:hover{
+    text-decoration:underline;
+}
