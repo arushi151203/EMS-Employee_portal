@@ -1,0 +1,91 @@
+import { MoreVertical } from "lucide-react";
+
+function TaskList({ tasks, onToggleComplete }) {
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "high":
+        return "bg-orange-500/20 text-orange-400";
+      case "medium":
+        return "bg-blue-500/20 text-blue-400";
+      case "urgent":
+        return "bg-red-500/20 text-red-400";
+      default:
+        return "bg-green-500/20 text-green-400";
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "todo":
+        return "bg-gray-600 text-white";
+      case "in-progress":
+        return "bg-blue-600 text-white";
+      case "done":
+        return "bg-green-600 text-white";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-xl border border-slate-700">
+      {tasks.map((task) => (
+        <div
+          key={task.id}
+          className="flex items-center justify-between border-b border-slate-700 bg-[#111827] p-5 hover:bg-slate-800"
+        >
+          <div className="flex items-start gap-4">
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => onToggleComplete(task.id)}
+              className="mt-1 h-5 w-5 accent-blue-600"
+            />
+
+            <div>
+              <h3
+                className={`text-lg font-semibold ${
+                  task.completed
+                    ? "line-through text-gray-500"
+                    : "text-white"
+                }`}
+              >
+                {task.title}
+              </h3>
+
+              <div className="mt-3 flex gap-3">
+                <span
+                  className={`rounded-full px-3 py-1 text-xs ${getPriorityColor(
+                    task.priority
+                  )}`}
+                >
+                  {task.priority}
+                </span>
+
+                <span className="text-sm text-gray-400">
+                  Due {task.dueDate}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span
+              className={`rounded-full px-3 py-1 text-sm ${getStatusColor(
+                task.status
+              )}`}
+            >
+              {task.status}
+            </span>
+
+            <button>
+              <MoreVertical />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default TaskList;
