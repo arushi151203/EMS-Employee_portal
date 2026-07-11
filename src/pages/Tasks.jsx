@@ -13,6 +13,7 @@ function Tasks() {
   const [search, setSearch] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
+  // Search + Filter
   const filteredTasks = tasks.filter((task) => {
     const matchesFilter =
       filter === "all" || task.status === filter;
@@ -24,6 +25,7 @@ function Tasks() {
     return matchesFilter && matchesSearch;
   });
 
+  // Toggle Complete
   const handleToggleComplete = (id) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -38,8 +40,16 @@ function Tasks() {
     );
   };
 
+  // Add Task
   const handleAddTask = (newTask) => {
     setTasks((prev) => [...prev, newTask]);
+  };
+
+  // Delete Task
+  const handleDeleteTask = (id) => {
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.id !== id)
+    );
   };
 
   return (
@@ -78,7 +88,7 @@ function Tasks() {
 
             <button
               onClick={() => setView("list")}
-              className={`rounded-lg p-3 transition ${
+              className={`rounded-lg p-3 ${
                 view === "list"
                   ? "bg-blue-600 text-white"
                   : "text-gray-400 hover:text-white"
@@ -89,7 +99,7 @@ function Tasks() {
 
             <button
               onClick={() => setView("kanban")}
-              className={`rounded-lg p-3 transition ${
+              className={`rounded-lg p-3 ${
                 view === "kanban"
                   ? "bg-blue-600 text-white"
                   : "text-gray-400 hover:text-white"
@@ -113,7 +123,7 @@ function Tasks() {
 
       </div>
 
-      {/* Filter Buttons */}
+      {/* Filters */}
       <div className="mt-8 flex flex-wrap gap-3">
 
         {[
@@ -125,7 +135,7 @@ function Tasks() {
           <button
             key={item.value}
             onClick={() => setFilter(item.value)}
-            className={`rounded-lg px-5 py-2 font-medium transition ${
+            className={`rounded-lg px-5 py-2 font-medium ${
               filter === item.value
                 ? "bg-blue-600 text-white"
                 : "bg-[#1A2333] text-gray-400 hover:bg-slate-700 hover:text-white"
@@ -137,21 +147,20 @@ function Tasks() {
 
       </div>
 
-      {/* Task Content */}
+      {/* Content */}
       <div className="mt-8">
-
         {view === "list" ? (
           <TaskList
             tasks={filteredTasks}
             onToggleComplete={handleToggleComplete}
+            onDeleteTask={handleDeleteTask}
           />
         ) : (
           <KanbanBoard tasks={filteredTasks} />
         )}
-
       </div>
 
-      {/* New Task Modal */}
+      {/* Modal */}
       <NewTaskModal
         open={openModal}
         onClose={() => setOpenModal(false)}
