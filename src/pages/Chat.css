@@ -1,13 +1,12 @@
 .chat-page {
-  height: 100%;
-  width: calc(100% + 64px);
-  margin: -28px -32px;
+  height: calc(100vh - 64px - 48px);
+  width: calc(100% + 48px);
+  margin: -24px;
   display: flex;
   overflow: hidden;
   background: #0f172a;
   color: white;
   font-family: "Inter", sans-serif;
-  box-sizing: border-box;
 }
 
 .chat-page * {
