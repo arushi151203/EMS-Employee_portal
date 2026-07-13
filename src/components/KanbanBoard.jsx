@@ -1,4 +1,4 @@
-function KanbanBoard({ tasks }) {
+function KanbanBoard({ tasks, onToggleComplete }) {
   const todo = tasks.filter((task) => task.status === "todo");
   const inProgress = tasks.filter(
     (task) => task.status === "in-progress"
@@ -48,9 +48,24 @@ function KanbanBoard({ tasks }) {
                 key={task.id}
                 className="rounded-xl bg-slate-800 p-4 hover:bg-slate-700 transition"
               >
-                <h3 className="font-semibold">
-                  {task.title}
-                </h3>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={task.completed}
+                    onChange={() => onToggleComplete(task.id)}
+                    className="mt-1 h-4 w-4 shrink-0 accent-blue-600"
+                  />
+
+                  <h3
+                    className={`font-semibold ${
+                      task.completed
+                        ? "line-through text-gray-500"
+                        : "text-white"
+                    }`}
+                  >
+                    {task.title}
+                  </h3>
+                </div>
 
                 <div className="mt-4 flex justify-between text-sm text-gray-400">
                   <span>{task.priority}</span>

@@ -143,7 +143,8 @@ function Tasks() {
             onDeleteTask={handleDeleteTask}
           />
         ) : (
-          <KanbanBoard tasks={filteredTasks} />
+          <KanbanBoard tasks={filteredTasks} 
+           onToggleComplete={handleToggleComplete}/>
         )}
       </div>
 

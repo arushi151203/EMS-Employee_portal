@@ -1,4 +1,4 @@
-import "./Chat.css";
+import "../styles/Chat.css";
 import { useState } from "react";
 
 import initialContacts from "../data/contacts";
