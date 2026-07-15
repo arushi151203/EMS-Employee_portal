@@ -1,11 +1,14 @@
-function StatsCard({ title, value, color }) {
+function StatsCard({ title, value, subtitle, icon }) {
   return (
-    <div className="col-md-3">
-      <div className={`card text-white bg-${color}`}>
-        <div className="card-body text-center">
-          <h6>{title}</h6>
-          <h2>{value}</h2>
-        </div>
+    <div className="stats-card">
+      <div className="stats-left">
+        <p className="stats-title">{title}</p>
+        <h2 className="stats-value">{value}</h2>
+        <span className="stats-subtitle">{subtitle}</span>
+      </div>
+
+      <div className="stats-right">
+        {icon}
       </div>
     </div>
   );

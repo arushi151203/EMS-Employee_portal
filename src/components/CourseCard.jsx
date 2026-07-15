@@ -1,42 +1,39 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
-function CourseCard({ image, title, instructor, progress, color }) {
-  const [courseProgress, setCourseProgress] = useState(progress);
-  const navigate = useNavigate();
-
+function CourseCard({
+  id,
+  category,
+  status,
+  title,
+  duration,
+  progress,
+}) {
   return (
-    <div className="col-md-4 mb-4">
-      <div className="card h-100">
-        <img src={image} className="card-img-top" alt={title} />
-
-        <div className="card-body">
-          <h5>{title}</h5>
-
-          <p>Instructor: {instructor}</p>
-
-          <div className="progress">
-            <div
-              className={`progress-bar bg-${color}`}
-              style={{ width: `${courseProgress}%` }}
-            >
-              {courseProgress}%
-            </div>
-          </div>
-
-          <button
-            className="btn btn-primary w-100 mt-3"
-            onClick={() => {
-              setCourseProgress(
-                courseProgress < 100 ? courseProgress + 10 : 100
-              );
-              navigate("/course");
-            }}
-          >
-            Continue Learning
-          </button>
-        </div>
+    <div className="course-card">
+      <div className="course-top">
+        <span className="category">{category}</span>
+        <span className="status">{status}</span>
       </div>
+
+      <h3>{title}</h3>
+
+      <p>{duration}</p>
+
+      <div className="progress-text">
+        <span>Progress</span>
+        <span>{progress}% Complete</span>
+      </div>
+
+      <div className="progress-bar">
+        <div
+          className="progress-fill"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+
+      <Link to={`/course/${id}`} className="btn btn-primary">
+        Continue Learning
+      </Link>
     </div>
   );
 }

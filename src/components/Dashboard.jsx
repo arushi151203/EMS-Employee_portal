@@ -1,92 +1,100 @@
-import { useState } from "react";
+import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import StatsCard from "./StatsCard";
+import "../css/dashboard.css";
+
+import {
+  BsBook,
+  BsCheckCircle,
+  BsClock,
+  BsAward,
+} from "react-icons/bs";
 import CourseCard from "./CourseCard";
 
 function Dashboard() {
-  const [search, setSearch] = useState("");
-
-  const courses = [
-    {
-      image: "https://picsum.photos/400/200?1",
-      title: "HTML & CSS",
-      instructor: "John",
-      progress: 90,
-      color: "success",
-    },
-    {
-      image: "https://picsum.photos/400/200?2",
-      title: "JavaScript",
-      instructor: "David",
-      progress: 70,
-      color: "info",
-    },
-    {
-      image: "https://picsum.photos/400/200?3",
-      title: "React JS",
-      instructor: "Sarah",
-      progress: 45,
-      color: "warning",
-    },
-    {
-      image: "https://picsum.photos/400/200?4",
-      title: "Node JS",
-      instructor: "Alex",
-      progress: 20,
-      color: "danger",
-    },
-    {
-      image: "https://picsum.photos/400/200?5",
-      title: "Python",
-      instructor: "Emma",
-      progress: 100,
-      color: "success",
-    },
-    {
-      image: "https://picsum.photos/400/200?6",
-      title: "Data Structures",
-      instructor: "James",
-      progress: 60,
-      color: "primary",
-    },
-  ];
-
   return (
-    <div className="container py-4">
-      <Navbar />
+    <div className="dashboard-container">
+      <Sidebar />
 
-      <div className="row g-4">
-        <StatsCard title="Total Courses" value="6" color="primary" />
-        <StatsCard title="Completed" value="1" color="success" />
-        <StatsCard title="Ongoing" value="4" color="warning" />
-        <StatsCard title="Certificates" value="1" color="danger" />
-      </div>
+      <div className="main-content">
+        <Navbar />
 
-      <h3 className="mt-5 mb-3">My Courses</h3>
+        <div className="page-header">
+          <h1>Training</h1>
+          <p>Courses, certifications, and learning paths</p>
+        </div>
 
-      <input
-        type="text"
-        className="form-control mb-4"
-        placeholder="Search courses..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+        <div className="stats-container">
 
-      <div className="row">
-        {courses
-          .filter((course) =>
-            course.title.toLowerCase().includes(search.toLowerCase())
-          )
-          .map((course) => (
-            <CourseCard
-              key={course.title}
-              image={course.image}
-              title={course.title}
-              instructor={course.instructor}
-              progress={course.progress}
-              color={course.color}
-            />
-          ))}
+  <StatsCard
+    title="COURSES ENROLLED"
+    value="4"
+    icon={<BsBook size={24} />}
+  />
+
+  <StatsCard
+    title="COMPLETED"
+    value="1"
+    icon={<BsCheckCircle size={24} />}
+  />
+
+  <StatsCard
+    title="HOURS LEARNED"
+    value="18.5h"
+    icon={<BsClock size={24} />}
+  />
+
+  <StatsCard
+    title="CERTIFICATES"
+    value="2"
+    icon={<BsAward size={24} />}
+  />
+
+</div>
+
+        <h2 className="section-title">Current Courses</h2>
+
+<div className="course-container">
+
+  <CourseCard
+    id={1}
+    category="Technical"
+    status="in progress"
+    title="Advanced React Patterns"
+    duration="8h total"
+    progress={75}
+  />
+
+  <CourseCard
+    id={2}
+    category="Soft skills"
+    status="completed"
+    title="Leadership Fundamentals"
+    duration="4h total"
+    progress={100}
+  />
+
+  <CourseCard
+    id={3}
+    category="Compliance"
+    status="in progress"
+    title="Security Best Practices"
+    duration="3h total"
+    progress={30}
+  />
+  <CourseCard
+  id={4}
+  category="Analytics"
+  status="not started"
+  title="Data-Driven-Decision Making"
+  duration="6h total"
+  progress={0}
+/>
+
+</div>
+
+        {/* Learning Paths */}
+
       </div>
     </div>
   );
