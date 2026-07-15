@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Layers, Mail, Lock, Eye, EyeOff, Users, Building2, Briefcase, Activity } from "lucide-react";
@@ -9,10 +9,11 @@ function Login() {
   const [role, setRole] = useState("employee");
   const [mode, setMode] = useState("password");
   const [showPass, setShowPass] = useState(false);
-  const [email, setEmail] = useState("aravind.kumar@nexus.io");
+  const [email, setEmail] = useState("demo.john@nexus.io");
   const [password, setPassword] = useState("password");
   const [otp, setOtp] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [showSupportModal, setShowSupportModal] = useState(false);
   return <div className="min-h-screen grid lg:grid-cols-2 bg-background">
       {
     /* Left panel */
@@ -178,11 +179,38 @@ function Login() {
             </button>
           </form>
           <div className="mt-4 text-center text-xs text-muted-foreground">
-            Need help? <Link to="/helpdesk" className="text-primary hover:underline">Contact support</Link>
+             Need help?{" "}
+             <button
+               type="button"
+               onClick={() => setShowSupportModal(true)}
+               className="text-primary hover:underline"
+              >
+              Contact support
+            </button>
           </div>
         </div>
       </div>
+      {showSupportModal && (
+     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-surface-elevated p-6 shadow-glow">
+            <h3 className="text-lg font-semibold">Need Help?</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Can't sign in? Reach out to our support team.
+            </p>
+            <div className="mt-4 space-y-2 text-sm">
+              <p className="text-muted-foreground">📧 support@nexustech.io</p>
+              <p className="text-muted-foreground">📞 +91-XXXXXXXXXX</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowSupportModal(false)}
+              className="mt-5 w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>;
 }
 export default Login;
-
