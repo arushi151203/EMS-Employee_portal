@@ -31,8 +31,10 @@ function CourseCard({
         ></div>
       </div>
 
-      <Link to={`/course/${id}`} className="btn btn-primary">
+      <Link to={`/course/${id}`}>
+      <button className="continue-btn">
         Continue Learning
+        </button>
       </Link>
     </div>
   );

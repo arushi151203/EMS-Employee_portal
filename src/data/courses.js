@@ -1,7 +1,7 @@
 const courses = [
   {
     id: 1,
-    title: "React.js Fundamentals",
+    title: "Advanced React Patterns",
     instructor: "John Carter",
     duration: "8 Hours",
     progress: 75,
@@ -10,28 +10,28 @@ const courses = [
   },
   {
     id: 2,
-    title: "JavaScript Essentials",
+    title: "Leadership Fundamentals",
     instructor: "Emily Watson",
-    duration: "6 Hours",
-    progress: 60,
+    duration: "4 Hours",
+    progress: 100,
     description: "Master JavaScript ES6, DOM manipulation and asynchronous programming.",
     image: "https://via.placeholder.com/300x180"
   },
   {
     id: 3,
-    title: "HTML & CSS Mastery",
+    title: "Security Best Practices",
     instructor: "David Miller",
-    duration: "5 Hours",
-    progress: 90,
+    duration: "3 Hours",
+    progress: 30,
     description: "Build responsive websites using HTML5 and CSS3.",
     image: "https://via.placeholder.com/300x180"
   },
   {
     id: 4,
-    title: "Node.js Basics",
+    title: "Data-Driven-Decision Making",
     instructor: "Sophia Brown",
-    duration: "7 Hours",
-    progress: 45,
+    duration: "6 Hours",
+    progress: 0,
     description: "Learn backend development with Node.js and Express.",
     image: "https://via.placeholder.com/300x180"
   }
