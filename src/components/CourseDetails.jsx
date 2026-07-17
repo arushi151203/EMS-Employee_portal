@@ -10,7 +10,13 @@ function CourseDetails() {
 
   return (
     <div className="course-details">
-      <h1>{course.title}</h1>
+  <img
+    src={course.image}
+    alt={course.title}
+    className="course-image"
+  />
+
+  <h1>{course.title}</h1>
       <p><strong>Instructor:</strong> {course.instructor}</p>
       <p><strong>Duration:</strong> {course.duration}</p>
       <p><strong>Lessons:</strong> {course.lessons}</p>
