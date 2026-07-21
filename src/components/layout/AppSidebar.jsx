@@ -25,7 +25,7 @@ import {
   UserPlus,
   Megaphone
 } from "lucide-react";
-import { currentUser } from "@/lib/mock-data";
+import { currentUser } from "@/employee/lib/mock-data";
 import { useRole, roleLabels, logout } from "@/lib/auth";
 const employeeNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -79,7 +79,7 @@ function AppSidebar() {
         <div className="font-semibold text-sidebar-foreground">Nexus HR</div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 pb-4 space-y-0.5">
         <div className="px-2 pt-5 pb-2 text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
           Employee Portal
         </div>

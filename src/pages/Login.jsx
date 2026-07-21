@@ -1,19 +1,82 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Layers, Mail, Lock, Eye, EyeOff, Users, Building2, Briefcase, Activity } from "lucide-react";
+import { Layers, Mail, Lock, Eye, EyeOff, Users, Building2, Briefcase, Activity, X } from "lucide-react";
 import { setRole as persistRole } from "@/lib/auth";
+
+const roleCredentials = {
+  employee: { email: "employee.demo@nexus.io", password: "password" },
+  hr: { email: "hr.demo@nexus.io", password: "hrpass123" },
+  admin: { email: "admin.demo@nexus.io", password: "adminpass123" }
+};
 
 function Login() {
   const navigate = useNavigate();
   const [role, setRole] = useState("employee");
   const [mode, setMode] = useState("password");
   const [showPass, setShowPass] = useState(false);
-  const [email, setEmail] = useState("demo.john@nexus.io");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState(roleCredentials.employee.email);
+  const [password, setPassword] = useState(roleCredentials.employee.password);
   const [otp, setOtp] = useState("");
   const [emailError, setEmailError] = useState("");
   const [showSupportModal, setShowSupportModal] = useState(false);
+
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotStep, setForgotStep] = useState("email");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [forgotError, setForgotError] = useState("");
+
+  const resetForgotFlow = () => {
+    setShowForgotModal(false);
+    setForgotStep("email");
+    setForgotEmail("");
+    setForgotOtp("");
+    setGeneratedOtp("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setForgotError("");
+  };
+
+  const handleSendOtp = () => {
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotEmail.trim());
+    if (!emailOk) {
+      setForgotError("Enter a valid email address");
+      return;
+    }
+    setForgotError("");
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    setGeneratedOtp(code);
+    toast.info(`OTP sent (demo): ${code}`);
+    setForgotStep("otp");
+  };
+
+  const handleVerifyOtp = () => {
+    if (forgotOtp !== generatedOtp) {
+      setForgotError("Incorrect code, try again");
+      return;
+    }
+    setForgotError("");
+    setForgotStep("reset");
+  };
+
+  const handleResetPassword = () => {
+    if (newPassword.length < 4) {
+      setForgotError("Password must be at least 4 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setForgotError("Passwords do not match");
+      return;
+    }
+    setForgotError("");
+    toast.success("Password updated. Please sign in.");
+    resetForgotFlow();
+  };
+
   return <div className="min-h-screen grid lg:grid-cols-2 bg-background">
       {
     /* Left panel */
@@ -71,7 +134,12 @@ function Login() {
           <div className="mt-6 rounded-xl bg-surface p-1 grid grid-cols-3 text-sm">
             {["employee", "hr", "admin"].map((r) => <button
     key={r}
-    onClick={() => setRole(r)}
+    onClick={() => {
+      setRole(r);
+      setEmail(roleCredentials[r].email);
+      setPassword(roleCredentials[r].password);
+      setEmailError("");
+    }}
     className={`rounded-lg py-2 capitalize transition ${role === r ? "bg-surface-elevated text-foreground shadow-sm" : "text-muted-foreground"}`}
   >
                 {r === "hr" ? "HR" : r}
@@ -147,7 +215,10 @@ function Login() {
                 <div className="mt-2 text-right">
                   <button
     type="button"
-    onClick={() => toast.info("Password reset link sent (demo)")}
+    onClick={() => {
+      setForgotEmail(email);
+      setShowForgotModal(true);
+    }}
     className="text-xs text-primary hover:underline"
   >
                     Forgot password?
@@ -208,6 +279,118 @@ function Login() {
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {showForgotModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-surface-elevated p-6 shadow-glow relative">
+            <button
+              type="button"
+              onClick={resetForgotFlow}
+              className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {forgotStep === "email" && (
+              <>
+                <h3 className="text-lg font-semibold">Reset your password</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Enter your email and we'll send you a verification code.
+                </p>
+                <div className="mt-4">
+                  <label className="text-xs font-medium text-muted-foreground">Email</label>
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
+                  />
+                  {forgotError && <p className="mt-1 text-xs text-destructive">{forgotError}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  className="mt-5 w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95"
+                >
+                  Send code
+                </button>
+              </>
+            )}
+
+            {forgotStep === "otp" && (
+              <>
+                <h3 className="text-lg font-semibold">Enter verification code</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  We sent a 6-digit code to {forgotEmail}.
+                </p>
+                <div className="mt-4">
+                  <label className="text-xs font-medium text-muted-foreground">One-time code</label>
+                  <input
+                    type="text"
+                    value={forgotOtp}
+                    onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="6-digit code"
+                    className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2.5 text-sm tracking-[0.4em] text-center focus:outline-none focus:ring-2 focus:ring-ring/60"
+                  />
+                  {forgotError && <p className="mt-1 text-xs text-destructive">{forgotError}</p>}
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    className="mt-2 text-xs text-primary hover:underline"
+                  >
+                    Resend code
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="mt-5 w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95"
+                >
+                  Verify code
+                </button>
+              </>
+            )}
+
+            {forgotStep === "reset" && (
+              <>
+                <h3 className="text-lg font-semibold">Set a new password</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Choose a new password for your account.
+                </p>
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">New password</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Confirm password</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
+                    />
+                  </div>
+                  {forgotError && <p className="text-xs text-destructive">{forgotError}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  className="mt-5 w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground hover:opacity-95"
+                >
+                  Update password
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

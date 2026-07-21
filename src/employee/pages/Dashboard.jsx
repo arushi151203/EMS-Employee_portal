@@ -29,7 +29,7 @@ import {
   dashboardStats,
   attendanceMonthly,
   recentTasks
-} from "@/lib/mock-data";
+} from "@/employee/lib/mock-data";
 import { useStore } from "@/lib/store";
 
 const iconMap = {

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Search, LogOut, User, Settings as SettingsIcon, CheckCircle2, Trash2, X, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
-import { currentUser, notifications as seedNotifications } from "@/lib/mock-data";
+import { currentUser, notifications as seedNotifications } from "@/employee/lib/mock-data";
 import { useRole, logout, roleLabels } from "@/lib/auth";
 import { useStore, uid } from "@/lib/store";
 import {
@@ -59,17 +59,19 @@ function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 backdrop-blur px-4 sm:px-6">
-      <form onSubmit={performSearch} className="relative flex-1 max-w-xl">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search employees, tasks, leave…"
-          className="w-full rounded-lg bg-surface border border-border pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60"
-        />
-      </form>
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/80 backdrop-blur px-4 sm:px-6">
+      <form onSubmit={performSearch} className="relative w-full max-w-sm">
+  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+  <input
+    type="text"
+    value={query}
+    onChange={(e) => setQuery(e.target.value)}
+    placeholder="Search employees, tasks, leave…"
+    className="w-full rounded-lg bg-surface border border-border pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60"
+  />
+</form>
+
+<div className="flex-1" />
 
       <button
         onClick={toggleDarkMode}
