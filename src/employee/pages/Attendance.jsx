@@ -1,13 +1,43 @@
-export default function Attendance() {
+import "../styles/Attendance.css";
+import AttendanceStatus from "../components/Attendance/AttendanceStatus";
+import AttendanceCalendar from "../components/Attendance/AttendanceCalendar";
+import AttendanceHistory from "../components/Attendance/AttendanceHistory";
+
+function Attendance() {
   return (
     <div>
-      <h1 style={{ fontSize: '22px', margin: '0 0 4px' }}>Attendance</h1>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '24px' }}>
-        Replace this page with the Attendance module code.
-      </p>
-      <div className="placeholder-page">
-        Paste Attendance module content here (from the person assigned to this module).
-      </div>
+      <main className="page-content">
+
+        <div className="page-header">
+
+          <h1 className="page-title">
+            Attendance
+          </h1>
+
+          <p className="page-subtitle">
+            Track your attendance and working hours
+          </p>
+
+        </div>
+
+        <div className="dashboard-grid">
+
+          <AttendanceStatus />
+
+          <AttendanceCalendar />
+
+        </div>
+
+        <div className="table-section">
+
+          <AttendanceHistory />
+
+        </div>
+
+      </main>
+
     </div>
   );
 }
+
+export default Attendance;
