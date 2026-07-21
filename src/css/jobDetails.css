@@ -1,0 +1,62 @@
+.job-details{
+    padding:30px;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+.back-btn{
+    padding:10px 18px;
+    border:none;
+    border-radius:8px;
+    background:#1e3a8a;
+    color:white;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.job-summary{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin:20px 0;
+}
+
+.candidate-table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.candidate-table th{
+    background:#1e3a8a;
+    color:white;
+    padding:15px;
+}
+
+.candidate-table td{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+}
+
+.status-badge{
+    background:#dbeafe;
+    color:#1e40af;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:14px;
+}
+
+.resume-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.resume-btn:hover{
+    background:#1d4ed8;
+}
