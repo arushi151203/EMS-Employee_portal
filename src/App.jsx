@@ -16,6 +16,7 @@ import Performance from './employee/pages/Performance';
 import Chat from './employee/pages/Chat';
 import Notifications from './employee/pages/Notifications';
 import Training from './employee/pages/Training';
+import CourseDetails from './employee/components/training/CourseDetails';
 import Documents from './employee/pages/Documents';
 import Settings from './employee/pages/Settings';
 import HRDashboard from './hr/pages/Dashboard';
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/training" element={<Training />} />
+          <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
