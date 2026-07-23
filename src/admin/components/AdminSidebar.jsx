@@ -12,7 +12,7 @@ import {
 import { useRole, roleLabels, logout } from "@/lib/auth";
 
 const navItems = [
-  { label: "Analytics", to: "/admin", icon: BarChart3, end: true },
+  { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
   { label: "User Management", to: "/admin/users", icon: Users },
   { label: "Payroll", to: "/admin/payroll", icon: DollarSign },
   { label: "Reports", to: "/admin/reports", icon: FileText },

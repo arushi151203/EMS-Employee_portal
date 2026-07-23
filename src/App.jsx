@@ -20,7 +20,8 @@ import Documents from './employee/pages/Documents';
 import Settings from './employee/pages/Settings';
 import HRDashboard from './hr/pages/Dashboard';
 import HRPerformance from './hr/pages/Performance';
-import AdminDashboard from './admin/pages/Dashboard';
+import Analytics from './admin/pages/Analytics';
+import Reports from './admin/pages/Reports';
 
 function RequireAuth({ children }) {
   return isAuthenticated() ? children : <Navigate to="/" replace />;
@@ -52,9 +53,11 @@ export default function App() {
           <Route path="performance" element={<HRPerformance />} />
         </Route>
 
-        <Route path="/admin" element={<RequireAuth><AdminShell /></RequireAuth>}>
-          <Route index element={<AdminDashboard />} />
-        </Route>
+       <Route path="/admin" element={<RequireAuth><AdminShell /></RequireAuth>}>
+          <Route index element={<Analytics />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="reports" element={<Reports />} />
+       </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
