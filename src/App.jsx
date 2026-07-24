@@ -21,8 +21,15 @@ import Documents from './employee/pages/Documents';
 import Settings from './employee/pages/Settings';
 import HRDashboard from './hr/pages/Dashboard';
 import HRPerformance from './hr/pages/Performance';
+import Recruitment from './hr/pages/Recruitment';
+import JobDetails from './hr/pages/JobDetails';
+import CandidateDetails from './hr/pages/CandidateDetails';
 import Analytics from './admin/pages/Analytics';
 import Reports from './admin/pages/Reports';
+import AdminPayroll from './admin/pages/Payroll';
+import AuditLogs from './admin/pages/AuditLogs';
+import UserManagement from './admin/pages/UserManagement';
+import SystemSettings from './admin/pages/SystemSettings';
 
 function RequireAuth({ children }) {
   return isAuthenticated() ? children : <Navigate to="/" replace />;
@@ -53,12 +60,19 @@ export default function App() {
         <Route path="/hr" element={<RequireAuth><HRShell /></RequireAuth>}>
           <Route index element={<HRDashboard />} />
           <Route path="performance" element={<HRPerformance />} />
+          <Route path="recruitment" element={<Recruitment />} />
+          <Route path="job/:id" element={<JobDetails />} />
+          <Route path="candidate/:id" element={<CandidateDetails />} />
         </Route>
 
        <Route path="/admin" element={<RequireAuth><AdminShell /></RequireAuth>}>
           <Route index element={<Analytics />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="payroll" element={<AdminPayroll />} />
+          <Route path="audit-logs" element={<AuditLogs />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="settings" element={<SystemSettings />} />
        </Route>
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

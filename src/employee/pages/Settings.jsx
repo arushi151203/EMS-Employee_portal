@@ -1,13 +1,155 @@
-export default function Settings() {
+import { useState } from "react";
+import { PageHeader } from "@/components/common/PageHeader";
+
+const currentUser = {
+  firstName: "John",
+  lastName: "Doe",
+  email: "john.doe@nexus.io",
+  phone: "+1 (555) 012-4789",
+  timezone: "America/Los_Angeles",
+};
+
+const sections = ["Account", "Security", "Notifications", "Preferences"];
+
+function Settings() {
+  const [section, setSection] = useState("Account");
+
   return (
-    <div>
-      <h1 style={{ fontSize: '22px', margin: '0 0 4px' }}>Settings</h1>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '24px' }}>
-        Replace this page with the Settings module code.
-      </p>
-      <div className="placeholder-page">
-        Paste Settings module content here (from the person assigned to this module).
+    <div className="space-y-6">
+      <PageHeader title="Settings" subtitle="Manage your account and preferences" />
+
+      <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
+        <nav className="rounded-2xl border border-border bg-card p-2 h-fit">
+          {sections.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSection(s)}
+              className={`block w-full text-left rounded-lg px-3 py-2 text-sm ${section === s ? "bg-surface-elevated font-medium" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </nav>
+
+        <div className="rounded-2xl border border-border bg-card p-6">
+          {section === "Account" && (
+            <div className="space-y-5">
+              <Field label="Full Name" value={`${currentUser.firstName} ${currentUser.lastName}`} />
+              <Field label="Email" value={currentUser.email} />
+              <Field label="Phone" value={currentUser.phone} />
+              <Field label="Time Zone" value={currentUser.timezone} />
+              <button className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow">
+                Save Account
+              </button>
+            </div>
+          )}
+
+          {section === "Security" && (
+            <div className="space-y-5">
+              <div>
+                <div className="text-sm font-medium">Change Password</div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <Field label="Current password" value="" type="password" />
+                  <Field label="New password" value="" type="password" />
+                </div>
+              </div>
+              <Toggle label="Two-factor authentication" desc="Add an extra layer of security to your account" defaultOn />
+              <Toggle label="Session expiry after 30 days" desc="Automatically sign out on idle browsers" defaultOn />
+              <div>
+                <div className="text-sm font-medium">Active Sessions</div>
+                <div className="mt-2 space-y-2 text-sm">
+                  <SessionRow device="MacBook Pro · San Francisco" active last="Now" />
+                  <SessionRow device="iPhone 15 · San Francisco" last="2h ago" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {section === "Notifications" && (
+            <div className="space-y-4">
+              <Toggle label="Email notifications" desc="Announcements, leave and payslip updates" defaultOn />
+              <Toggle label="Push notifications" desc="Real-time task and mention alerts" defaultOn />
+              <Toggle label="Weekly digest" desc="Summary of your week every Friday" />
+              <Toggle label="Task reminders" desc="Remind me 24h before a task is due" defaultOn />
+            </div>
+          )}
+
+          {section === "Preferences" && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-muted-foreground">Language</label>
+                <select className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm">
+                  <option>English (US)</option>
+                  <option>Español</option>
+                  <option>Français</option>
+                  <option>Deutsch</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Theme</label>
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {["Dark", "Light", "System"].map((t) => (
+                    <button key={t} className={`rounded-lg border border-border px-3 py-2 text-sm ${t === "Dark" ? "bg-surface-elevated font-medium" : "bg-surface text-muted-foreground"}`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Toggle label="Reduce motion" desc="Minimize animations across the app" />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
+function Field({ label, value, type = "text" }) {
+  return (
+    <label className="block">
+      <div className="mb-1 text-xs text-muted-foreground">{label}</div>
+      <input
+        type={type}
+        defaultValue={value}
+        className="w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
+      />
+    </label>
+  );
+}
+
+function Toggle({ label, desc, defaultOn }) {
+  const [on, setOn] = useState(!!defaultOn);
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface p-4">
+      <div>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-muted-foreground">{desc}</div>
+      </div>
+      <button
+        onClick={() => setOn((v) => !v)}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-gradient-primary" : "bg-muted"}`}
+        aria-pressed={on}
+      >
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${on ? "left-[22px]" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
+
+function SessionRow({ device, active, last }) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-3">
+      <div>
+        <div className="text-sm">{device}</div>
+        <div className="text-xs text-muted-foreground">Last active {last}</div>
+      </div>
+      {active ? (
+        <span className="rounded-full bg-success/15 text-success px-2 py-0.5 text-xs">Current</span>
+      ) : (
+        <button className="text-xs text-destructive hover:underline">Sign out</button>
+      )}
+    </div>
+  );
+}
+
+export default Settings;

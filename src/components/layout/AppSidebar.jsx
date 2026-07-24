@@ -36,7 +36,7 @@ const employeeNav = [
   { to: "/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/performance", label: "Performance", icon: LineChart },
   { to: "/chat", label: "Chat", icon: MessagesSquare },
-  { to: "/announcements", label: "Announcements", icon: Bell },
+  { to: "/notifications", label: "Notifications", icon: Bell },
   { to: "/training", label: "Training", icon: GraduationCap },
   { to: "/documents", label: "Documents", icon: FileText },
   { to: "/settings", label: "Settings", icon: SettingsIcon }
