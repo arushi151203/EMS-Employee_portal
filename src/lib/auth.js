@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from "react";
 const KEY = "nexus.role";
 const AUTH_KEY = "nexus.authed";
+const USER_KEY = "nexus.user";
+const TOKEN_KEY = "nexus.token";
 const listeners = /* @__PURE__ */ new Set();
 function read() {
   if (typeof window === "undefined") return "employee";
@@ -20,9 +22,26 @@ function isAuthenticated() {
   if (typeof window === "undefined") return false;
   return window.localStorage.getItem(AUTH_KEY) === "1";
 }
+function setSession(user, token) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(USER_KEY, JSON.stringify(user));
+  window.localStorage.setItem(TOKEN_KEY, token);
+  setRole(user.role);
+}
+function getUser() {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(USER_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+function getToken() {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(TOKEN_KEY);
+}
 function logout() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_KEY);
+  window.localStorage.removeItem(USER_KEY);
+  window.localStorage.removeItem(TOKEN_KEY);
   listeners.forEach((l) => l());
 }
 function useRole() {
@@ -42,9 +61,12 @@ const roleLabels = {
 };
 export {
   getRole,
+  getToken,
+  getUser,
   isAuthenticated,
   logout,
   roleLabels,
   setRole,
+  setSession,
   useRole
 };

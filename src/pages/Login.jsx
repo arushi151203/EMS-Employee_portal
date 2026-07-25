@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Layers, Mail, Lock, Eye, EyeOff, Users, Building2, Briefcase, Activity, X } from "lucide-react";
-import { setRole as persistRole } from "@/lib/auth";
+import { setSession } from "@/lib/auth";
+import { login as loginApi } from "@/lib/authService";
 
 const roleCredentials = {
   employee: { email: "employee.demo@nexus.io", password: "password" },
@@ -18,6 +19,7 @@ function Login() {
   const [email, setEmail] = useState(roleCredentials.employee.email);
   const [password, setPassword] = useState(roleCredentials.employee.password);
   const [otp, setOtp] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [showSupportModal, setShowSupportModal] = useState(false);
 
@@ -157,7 +159,7 @@ function Login() {
           </div>
 
           <form
-    onSubmit={(e) => {
+    onSubmit={async (e) => {
       e.preventDefault();
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
       if (!emailOk) {
@@ -173,9 +175,25 @@ function Login() {
         toast.error("Enter the 6-digit code");
         return;
       }
-      persistRole(role);
-      toast.success(`Welcome, ${email.split("@")[0]}!`);
-      navigate(role === "admin" ? "/admin" : role === "hr" ? "/hr" : "/dashboard");
+
+      if (mode === "otp") {
+        toast.info("OTP login isn't connected to a real backend yet — use password login for now.");
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
+        const res = await loginApi(email.trim(), password);
+        const { user, token } = res.data;
+        setSession(user, token);
+        toast.success(`Welcome, ${user.name}!`);
+        navigate(user.role === "admin" ? "/admin" : user.role === "hr" ? "/hr" : "/dashboard");
+      } catch (err) {
+        const message = err.response?.data?.message || "Login failed. Please try again.";
+        toast.error(message);
+      } finally {
+        setIsSubmitting(false);
+      }
     }}
     className="mt-6 space-y-4"
   >
@@ -244,9 +262,10 @@ function Login() {
 
             <button
     type="submit"
-    className="w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-95"
+    disabled={isSubmitting}
+    className="w-full rounded-lg bg-gradient-primary py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-60"
   >
-              Sign in
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
           <div className="mt-4 text-center text-xs text-muted-foreground">

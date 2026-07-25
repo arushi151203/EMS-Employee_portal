@@ -1,6 +1,34 @@
-
 CREATE DATABASE IF NOT EXISTS ems_db;
 USE ems_db;
+
+-- ---------------- DEPARTMENTS ----------------
+
+CREATE TABLE IF NOT EXISTS departments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT IGNORE INTO departments (name) VALUES
+    ('Engineering'), ('Human Resources'), ('Sales'), ('Marketing'), ('Finance'), ('Operations');
+
+-- ---------------- EMPLOYEES / USERS ----------------
+-- One table serves both as the login identity and the employee profile record.
+
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('employee','hr','admin') NOT NULL DEFAULT 'employee',
+    department_id INT NULL,
+    designation VARCHAR(100) NULL,
+    phone VARCHAR(20) NULL,
+    date_of_joining DATE NULL,
+    status ENUM('Active','Inactive') NOT NULL DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (department_id) REFERENCES departments(id)
+);
 
 CREATE TABLE IF NOT EXISTS attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,6 +40,21 @@ CREATE TABLE IF NOT EXISTS attendance (
     working_seconds INT DEFAULT 0,
     status VARCHAR(20) DEFAULT 'Present',
     UNIQUE KEY unique_employee_day (employee_id, attendance_date)
+);
+
+-- ---------------- LEAVE REQUESTS ----------------
+
+CREATE TABLE IF NOT EXISTS leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id VARCHAR(50) NOT NULL,
+    leave_type VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason VARCHAR(500) NULL,
+    status ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reviewed_by VARCHAR(50) NULL,
+    reviewed_at TIMESTAMP NULL
 );
 
 -- Optional: quick test row so you can confirm the API works immediately
