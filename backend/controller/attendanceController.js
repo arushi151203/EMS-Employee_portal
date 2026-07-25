@@ -5,7 +5,8 @@ exports.checkIn = (req, res) => {
     console.log("CHECH IN API CALLED");
     console.log(req.body);
 
-    const { employee_id } = req.body;
+    const { employee_id: rawEmployeeId } = req.body;
+    const employee_id = String(rawEmployeeId);
     const today = new Date().toISOString().slice(0, 10);
 
     db.query(
@@ -49,14 +50,18 @@ exports.checkIn = (req, res) => {
 
 exports.checkOut = (req, res) => {
 
-    const { employee_id } = req.body;
+    const { employee_id: rawEmployeeId } = req.body;
+    const employee_id = String(rawEmployeeId);
     const today = new Date().toISOString().slice(0,10);
 
     db.query(
         "SELECT * FROM attendance WHERE employee_id=? AND attendance_date=?",
         [employee_id, today],
         (err, rows) => {
-            if(err) return res.status(500).json(err);
+            if(err) {
+                console.log("CHECKOUT SELECT ERROR:", err);
+                return res.status(500).json(err);
+            }
 
             if(rows.length===0){
                 return res.json({
@@ -64,11 +69,13 @@ exports.checkOut = (req, res) => {
                 });
             }
             const attendance = rows[0];
+            console.log("CHECKOUT - attendance row:", attendance);
             const checkInTime = new Date(attendance.check_in);
             const checkOutTime = new Date();
             const breakSeconds = attendance.break_seconds || 0;
             const totalSeconds = Math.floor((checkOutTime - checkInTime)/1000);
             const workingSeconds = totalSeconds - breakSeconds;
+            console.log("CHECKOUT - computed:", { checkInTime, checkOutTime, breakSeconds, totalSeconds, workingSeconds });
 
             db.query(
                 `UPDATE attendance
@@ -83,8 +90,10 @@ exports.checkOut = (req, res) => {
                     today
                 ],
                 (err)=>{
-                    if(err)
+                    if(err) {
+                        console.log("CHECKOUT UPDATE ERROR:", err);
                         return res.status(500).json(err);
+                    }
 
                     res.json({
                         message:"Checked Out Successfully"
@@ -102,7 +111,7 @@ exports.checkOut = (req, res) => {
 
 exports.getTodayAttendance = (req, res) => {
 
-    const employeeId = req.params.employeeId;
+    const employeeId = String(req.params.employeeId);
     const today = new Date().toISOString().slice(0, 10);
     const sql = `
         SELECT *
@@ -125,7 +134,8 @@ exports.getTodayAttendance = (req, res) => {
 
 exports.updateBreak = (req,res)=>{
 
-    const { employee_id, break_seconds } = req.body;
+    const { employee_id: rawEmployeeId, break_seconds } = req.body;
+    const employee_id = String(rawEmployeeId);
     const today = new Date().toLocaleDateString("en-CA");
 
     db.query(
@@ -158,7 +168,7 @@ exports.updateBreak = (req,res)=>{
 
 exports.getAttendanceHistory = (req, res) => {
 
-    const employeeId = req.params.employeeId;
+    const employeeId = String(req.params.employeeId);
     const sql = `
         SELECT
         attendance_date,
@@ -187,7 +197,7 @@ exports.getAttendanceHistory = (req, res) => {
 
 exports.getCalendarData = (req, res) => {
 
-    const employeeId = req.params.employeeId;
+    const employeeId = String(req.params.employeeId);
     const month = parseInt(req.query.month);
     const year = parseInt(req.query.year);
     const sql = `

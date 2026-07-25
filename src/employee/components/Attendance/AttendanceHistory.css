@@ -139,13 +139,20 @@ tbody td {
 @media (max-width: 768px) {
 
   .attendance-history {
-    overflow-x: auto;
+    overflow-x: hidden;
 
   }
 
   table {
 
-    min-width: 760px;
+    font-size: 12px;
+
+  }
+
+  thead th,
+  tbody td {
+
+    padding: 10px 8px;
 
   }
 

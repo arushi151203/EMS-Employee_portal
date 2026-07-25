@@ -4,10 +4,14 @@ background:#162234;
 border:1px solid #2d3d52;
 border-radius:22px;
 padding:26px;
-height:470px;
+min-height:470px;
 
 display:flex;
 flex-direction:column;
+
+min-width:0;
+overflow:hidden;
+box-sizing:border-box;
 
 }
 
@@ -191,44 +195,56 @@ background:#5b4623;
 
 /* -------------------------- */
 
-.calendar-scroll{
+.calendar-grid-wrapper{
     display:flex;
-    gap:14px;
-    overflow-x:auto;
-    padding:8px 0 12px;
-    scroll-behavior:smooth;
+    flex-direction:column;
+    gap:8px;
+    flex:1;
+    min-width:0;
+    width:100%;
 }
 
-.calendar-scroll::-webkit-scrollbar{
-    height:8px;
+.calendar-grid{
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:8px;
+    width:100%;
+    min-width:0;
 }
 
-.calendar-scroll::-webkit-scrollbar-thumb{
-    background:#334155;
-    border-radius:10px;
+.weekday-header{
+    margin-bottom:2px;
+}
+
+.calendar-weekday-label{
+    text-align:center;
+    font-size:13px;
+    color:#728198;
+    font-weight:600;
 }
 
 .calendar-card{
 
-    min-width:84px;
-    height:150px;
+    aspect-ratio:1;
+    width:100%;
 
-    border-radius:16px;
+    border-radius:12px;
 
     background:#172131;
 
     display:flex;
-    flex-direction:column;
-
-    justify-content:center;
     align-items:center;
+    justify-content:center;
 
     transition:.25s;
 
-    flex-shrink:0;
-
     border:1px solid transparent;
 
+}
+
+.calendar-card.empty{
+    background:transparent;
+    border:none;
 }
 
 .calendar-card:hover{
@@ -237,17 +253,9 @@ background:#5b4623;
 
 }
 
-.calendar-weekday{
-
-    font-size:15px;
-    color:#94A3B8;
-    margin-bottom:8px;
-
-}
-
 .calendar-date{
 
-    font-size:26px;
+    font-size:16px;
     font-weight:700;
     color:#fff;
 

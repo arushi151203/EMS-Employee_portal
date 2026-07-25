@@ -258,3 +258,9 @@
     }
 
 }
+.info-message{
+    font-size:13px;
+    color:#94A3B8;
+    margin:6px 0 0;
+    text-align:center;
+}

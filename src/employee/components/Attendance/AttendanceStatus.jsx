@@ -2,7 +2,7 @@ import "./AttendanceStatus.css";
 import { useState, useEffect } from "react";
 import {Coffee, Clock3} from "lucide-react";
 import {checkIn, checkOut, getToday, updateBreak} from "./services/attendanceService";
-const employeeId = 1;
+const employeeId = "EMP001";
 
 function AttendanceStatus() {
   const [attendance, setAttendance] = useState(null);
@@ -12,6 +12,8 @@ function AttendanceStatus() {
   const [checkInTime, setCheckInTime] = useState("--");
   const [checkOutTime, setCheckOutTime] = useState("--");
   const [workingHours, setWorkingHours] = useState("--");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [infoMessage, setInfoMessage] = useState("");
 
   useEffect(() => {
     loadAttendance();
@@ -39,6 +41,18 @@ function AttendanceStatus() {
     }
     setAttendance(res.data);
 
+    if (res.data) {
+      setCheckInTime(res.data.check_in ? new Date(res.data.check_in).toLocaleTimeString() : "--");
+      setCheckOutTime(res.data.check_out ? new Date(res.data.check_out).toLocaleTimeString() : "--");
+      setBreakSeconds(res.data.break_seconds || 0);
+      setWorkingHours(res.data.working_seconds ? formatTime(res.data.working_seconds) : "--");
+    } else {
+      setCheckInTime("--");
+      setCheckOutTime("--");
+      setBreakSeconds(0);
+      setWorkingHours("--");
+    }
+
   } catch (err) {
 
     console.log(err);
@@ -49,18 +63,27 @@ function AttendanceStatus() {
 
 const handleCheckIn = async () => {
 
+  if (isProcessing) return;
+  setIsProcessing(true);
+  setInfoMessage("");
+
   console.log("Check In button clicked");
 
   try{
     const res = await checkIn(employeeId);
     console.log(res.data);
-    setCheckedIn(true);
 
-    setCheckInTime(new Date().toLocaleTimeString());
+    if (res.data && res.data.message === "Already Checked In Today") {
+      setInfoMessage("You've already completed attendance for today.");
+    } else {
+      setCheckInTime(new Date().toLocaleTimeString());
+    }
 
     loadAttendance();
   } catch (error) {
     console.error(error);
+  } finally {
+    setIsProcessing(false);
   }
 
 };
@@ -111,17 +134,33 @@ const formatTime = (seconds) => {
 
 async function handleCheckOut() {
 
-    await checkOut(employeeId);
+    if (isProcessing) return;
+    setIsProcessing(true);
 
-    setCheckedIn(false);
+    console.log("Check Out button clicked");
 
-    setOnBreak(false);
+    try {
 
-    setCheckOutTime(new Date().toLocaleTimeString());
+      const res = await checkOut(employeeId);
+      console.log(res.data);
 
-    loadAttendance();
+      setCheckedIn(false);
+
+      setOnBreak(false);
+
+      setCheckOutTime(new Date().toLocaleTimeString());
+
+      loadAttendance();
+
+    } catch (error) {
+      console.error("Check out failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
 
 }
+
+  const dayCompleted = !!(attendance && attendance.check_in && attendance.check_out);
 
   return (
     <div className="card attendance-status">
@@ -142,6 +181,10 @@ async function handleCheckOut() {
         {checkedIn ? "Checked In" : "Not Checked In"}
       </div>
 
+      {infoMessage && (
+        <p className="info-message">{infoMessage}</p>
+      )}
+
       {/* Date */}
 
       <p className="today-date">
@@ -154,8 +197,9 @@ async function handleCheckOut() {
 
         <button
           className={checkedIn ? "checkout-btn" : "checkin-btn"}
+          disabled={isProcessing || dayCompleted}
           onClick={checkedIn ? handleCheckOut : handleCheckIn}>
-          {checkedIn ? "Check Out" : "Check In"}
+          {isProcessing ? "..." : dayCompleted ? "Completed for Today" : (checkedIn ? "Check Out" : "Check In")}
 
         </button>
 
@@ -195,8 +239,8 @@ async function handleCheckOut() {
         <div className="detail-row">
           <span>Status</span>
 
-          <strong className={checkedIn ? "status-present" : "status-absent"}>
-            {checkedIn ? "Present" : "Absent"}
+          <strong className={attendance && attendance.status === "Present" ? "status-present" : "status-absent"}>
+            {attendance && attendance.status ? attendance.status : "Absent"}
           </strong>
         </div>
       </div>

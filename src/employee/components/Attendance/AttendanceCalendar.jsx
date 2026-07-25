@@ -1,15 +1,12 @@
 import "./AttendanceCalendar.css";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCalendar } from "./services/attendanceService";
 
 function AttendanceCalendar() {
 
-  const employeeId = 1;
+  const employeeId = "EMP001";
   const today = new Date();
-
-  const scrollRef = useRef(null);
-  const todayRef = useRef(null);
 
   const [currentDate, setCurrentDate] = useState(today);
   const [calendarData, setCalendarData] = useState([]);
@@ -36,20 +33,6 @@ function AttendanceCalendar() {
     };
     loadCalendar();
   }, [month, year]);
-
-  useEffect(() => {
-    if (!scrollRef.current || !todayRef.current) return;
-
-    const container = scrollRef.current;
-    const today = todayRef.current;
-
-    const left = today.offsetLeft - container.clientWidth / 2 + today.clientWidth / 2;
-
-    container.scrollTo({
-      left,
-      behavior: "smooth",
-    });
-  }, [calendarData, month, year]);
 
   // -----------Convert DB rows to lookup-----------
 
@@ -133,18 +116,25 @@ function AttendanceCalendar() {
 
       {/* Calendar */}
 
-      <div className="calendar-scroll" ref={scrollRef}>
+      <div className="calendar-grid-wrapper">
+
+        {/* Weekday header */}
+
+        <div className="calendar-grid weekday-header">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            <div key={d} className="calendar-weekday-label">{d}</div>
+          ))}
+        </div>
 
         {/* Dates */}
 
-        <div className="calendar-row dates">
+        <div className="calendar-grid">
 
           {cells.map((cell, index) => {
 
-            if (!cell) return null;
+            if (!cell) return <div key={index} className="calendar-card empty" />;
 
             const cellDate = new Date(year, month, cell.day);
-            const dayName = cellDate.toLocaleDateString("en-CA", {weekday: "short",});
 
             const todayDate = new Date();
             todayDate.setHours(0, 0, 0, 0);
@@ -161,10 +151,6 @@ function AttendanceCalendar() {
                 ${isToday ? "today" : ""}
                 ${isFuture ? "future" : ""}
                 `}>
-
-                <span className="calendar-weekday">
-                  {dayName}
-                </span>
 
                 <span className="calendar-date">
                   {cell.day}
