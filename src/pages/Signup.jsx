@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail, Lock, User, Badge, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
-import { setSession } from "@/lib/auth";
 import { signup as signupApi } from "@/lib/authService";
 
 function Signup() {
@@ -37,10 +36,8 @@ function Signup() {
         password,
         role,
       });
-      const { user, token } = res.data;
-      setSession(user, token);
-      toast.success(`Welcome, ${user.name}!`);
-      navigate(user.role === "admin" ? "/admin" : user.role === "hr" ? "/hr" : "/dashboard");
+      toast.success(res.data.message || "Account created — awaiting approval.");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Please try again.");
     } finally {
@@ -52,9 +49,14 @@ function Signup() {
     <AuthLayout>
       <h2 className="text-3xl font-semibold tracking-tight">Create an account</h2>
       <p className="mt-1 text-sm text-muted-foreground">Join Nexus Technologies</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {role === "hr"
+          ? "New HR accounts need approval from an Admin before you can sign in."
+          : "New accounts need approval from HR or an Admin before you can sign in."}
+      </p>
 
-      <div className="mt-6 rounded-xl bg-surface p-1 grid grid-cols-3 text-sm">
-        {["employee", "hr", "admin"].map((r) => (
+      <div className="mt-6 rounded-xl bg-surface p-1 grid grid-cols-2 text-sm">
+        {["employee", "hr"].map((r) => (
           <button
             key={r}
             type="button"

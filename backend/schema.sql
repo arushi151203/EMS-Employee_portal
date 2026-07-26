@@ -1,19 +1,20 @@
+chema · SQL
 CREATE DATABASE IF NOT EXISTS ems_db;
 USE ems_db;
-
+ 
 -- ---------------- DEPARTMENTS ----------------
-
+ 
 CREATE TABLE IF NOT EXISTS departments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
-
+ 
 INSERT IGNORE INTO departments (name) VALUES
     ('Engineering'), ('Human Resources'), ('Sales'), ('Marketing'), ('Finance'), ('Operations');
-
+ 
 -- ---------------- EMPLOYEES / USERS ----------------
 -- One table serves both as the login identity and the employee profile record.
-
+ 
 CREATE TABLE IF NOT EXISTS employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id VARCHAR(50) NOT NULL UNIQUE,
@@ -21,6 +22,9 @@ CREATE TABLE IF NOT EXISTS employees (
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('employee','hr','admin') NOT NULL DEFAULT 'employee',
+    approval_status ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+    approved_by VARCHAR(50) NULL,
+    approved_at TIMESTAMP NULL,
     department_id INT NULL,
     designation VARCHAR(100) NULL,
     phone VARCHAR(20) NULL,
@@ -29,7 +33,7 @@ CREATE TABLE IF NOT EXISTS employees (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (department_id) REFERENCES departments(id)
 );
-
+ 
 CREATE TABLE IF NOT EXISTS attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id VARCHAR(50) NOT NULL,
@@ -41,9 +45,9 @@ CREATE TABLE IF NOT EXISTS attendance (
     status VARCHAR(20) DEFAULT 'Present',
     UNIQUE KEY unique_employee_day (employee_id, attendance_date)
 );
-
+ 
 -- ---------------- LEAVE REQUESTS ----------------
-
+ 
 CREATE TABLE IF NOT EXISTS leave_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id VARCHAR(50) NOT NULL,
@@ -56,18 +60,20 @@ CREATE TABLE IF NOT EXISTS leave_requests (
     reviewed_by VARCHAR(50) NULL,
     reviewed_at TIMESTAMP NULL
 );
-
+ 
 -- ---------------- PASSWORD RESET OTPS ----------------
-
+ 
 CREATE TABLE IF NOT EXISTS password_resets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(150) NOT NULL,
     otp_code VARCHAR(6) NOT NULL,
+    purpose VARCHAR(20) NOT NULL DEFAULT 'reset',
     expires_at DATETIME NOT NULL,
     verified TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE password_resets ADD COLUMN purpose VARCHAR(20) NOT NULL DEFAULT 'reset';
 
 -- Optional: quick test row so you can confirm the API works immediately
 -- INSERT INTO attendance (employee_id, attendance_date, status) VALUES ('EMP001', CURDATE(), 'Present');

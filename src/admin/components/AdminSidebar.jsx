@@ -3,6 +3,7 @@ import {
   Layers,
   BarChart3,
   Users,
+  UserCheck,
   DollarSign,
   FileText,
   Settings,
@@ -14,6 +15,7 @@ import { useRole, useUser, roleLabels, logout } from "@/lib/auth";
 const navItems = [
   { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
   { label: "User Management", to: "/admin/users", icon: Users },
+  { label: "Employee Approvals", to: "/admin/employee-approvals", icon: UserCheck },
   { label: "Payroll", to: "/admin/payroll", icon: DollarSign },
   { label: "Reports", to: "/admin/reports", icon: FileText },
   { label: "System Settings", to: "/admin/settings", icon: Settings },

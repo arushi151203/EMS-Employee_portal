@@ -15,7 +15,8 @@ exports.signup = async (req, res) => {
         return res.status(400).json({ message: "Name, email and password are required" });
     }
 
-    const allowedRoles = ["employee", "hr", "admin"];
+    // Admin accounts are never created via public signup — only 'employee' and 'hr' are allowed here.
+    const allowedRoles = ["employee", "hr"];
     const finalRole = allowedRoles.includes(role) ? role : "employee";
 
     db.query(
@@ -54,8 +55,8 @@ exports.signup = async (req, res) => {
                         const passwordHash = await bcrypt.hash(password, 10);
 
                         db.query(
-                            `INSERT INTO employees (employee_id, name, email, password_hash, role)
-                             VALUES (?, ?, ?, ?, ?)`,
+                            `INSERT INTO employees (employee_id, name, email, password_hash, role, approval_status)
+                             VALUES (?, ?, ?, ?, ?, 'Pending')`,
                             [employee_id, name, email, passwordHash, finalRole],
                     (err, result) => {
                                 if (err) {
@@ -63,10 +64,12 @@ exports.signup = async (req, res) => {
                                     return res.status(500).json(err);
                                 }
 
-                                const user = { id: result.insertId, employee_id, name, email, role: finalRole };
-                                const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
-
-                                res.status(201).json({ message: "Account created successfully", token, user });
+                                res.status(201).json({
+                                    message: finalRole === "hr"
+                                        ? "Account created. An Admin needs to approve it before you can log in."
+                                        : "Account created. HR or an Admin needs to approve it before you can log in.",
+                                    employee_id,
+                                });
                             }
                         );
                     } catch (hashErr) {
@@ -109,6 +112,14 @@ exports.login = async (req, res) => {
 
                 if (!match) {
                     return res.status(401).json({ message: "Invalid email or password" });
+                }
+
+                if (employee.approval_status === "Pending") {
+                    return res.status(403).json({ message: "Your account is still awaiting approval." });
+                }
+
+                if (employee.approval_status === "Rejected") {
+                    return res.status(403).json({ message: "Your signup request was rejected. Contact HR/Admin for details." });
                 }
 
                 const user = {
@@ -361,6 +372,15 @@ exports.verifyLoginOtp = (req, res) => {
           if (empRows.length === 0) return res.status(404).json({ message: "Account not found" });
 
           const employee = empRows[0];
+
+          if (employee.approval_status === "Pending") {
+            return res.status(403).json({ message: "Your account is still awaiting approval." });
+          }
+
+          if (employee.approval_status === "Rejected") {
+            return res.status(403).json({ message: "Your signup request was rejected. Contact HR/Admin for details." });
+          }
+
           const user = {
             id: employee.id,
             employee_id: employee.employee_id,
@@ -375,4 +395,108 @@ exports.verifyLoginOtp = (req, res) => {
       });
     }
   );
+};
+
+// ---------------- LIST PENDING SIGNUPS ----------------
+// HR sees only pending 'employee' signups. Admin sees pending 'employee' AND 'hr' signups.
+
+exports.getPendingApprovals = (req, res) => {
+
+    const requesterRole = req.user.role;
+
+    const rolesVisible = requesterRole === "admin" ? ["employee", "hr"] : ["employee"];
+
+    db.query(
+        `SELECT id, employee_id, name, email, role, created_at
+         FROM employees
+         WHERE approval_status='Pending' AND role IN (?)
+         ORDER BY created_at DESC`,
+        [rolesVisible],
+        (err, rows) => {
+            if (err) {
+                console.log("GET PENDING APPROVALS ERROR:", err);
+                return res.status(500).json(err);
+            }
+            res.json(rows);
+        }
+    );
+};
+
+// ---------------- LIST ALL EMPLOYEES ----------------
+
+exports.getAllEmployees = (req, res) => {
+
+    db.query(
+        `SELECT e.id, e.employee_id, e.name, e.email, e.role, e.approval_status,
+                e.designation, e.phone, e.status, e.date_of_joining, d.name AS department
+         FROM employees e
+         LEFT JOIN departments d ON e.department_id = d.id
+         ORDER BY e.created_at DESC`,
+        (err, rows) => {
+            if (err) {
+                console.log("GET ALL EMPLOYEES ERROR:", err);
+                return res.status(500).json(err);
+            }
+            res.json(rows);
+        }
+    );
+};
+
+// ---------------- APPROVE / REJECT ----------------
+
+function canReview(requesterRole, targetRole) {
+    if (targetRole === "employee") return requesterRole === "hr" || requesterRole === "admin";
+    if (targetRole === "hr") return requesterRole === "admin";
+    return false; // admin accounts are never approved through this flow
+}
+
+exports.reviewSignup = (req, res) => {
+
+    const { id } = req.params;
+    const { decision } = req.body; // "Approved" or "Rejected"
+
+    if (!["Approved", "Rejected"].includes(decision)) {
+        return res.status(400).json({ message: "Decision must be 'Approved' or 'Rejected'" });
+    }
+
+    db.query(
+        "SELECT * FROM employees WHERE id=?",
+        [id],
+        (err, rows) => {
+            if (err) {
+                console.log("REVIEW SIGNUP LOOKUP ERROR:", err);
+                return res.status(500).json(err);
+            }
+
+            if (rows.length === 0) {
+                return res.status(404).json({ message: "Signup request not found" });
+            }
+
+            const target = rows[0];
+
+            if (target.approval_status !== "Pending") {
+                return res.status(400).json({ message: "This request has already been reviewed" });
+            }
+
+            if (!canReview(req.user.role, target.role)) {
+                return res.status(403).json({
+                    message: target.role === "hr"
+                        ? "Only an Admin can approve HR signups"
+                        : "You don't have permission to review this signup"
+                });
+            }
+
+            db.query(
+                "UPDATE employees SET approval_status=?, approved_by=?, approved_at=NOW() WHERE id=?",
+                [decision, req.user.employee_id, id],
+                (err) => {
+                    if (err) {
+                        console.log("REVIEW SIGNUP UPDATE ERROR:", err);
+                        return res.status(500).json(err);
+                    }
+                    res.json({ message: `${target.name}'s signup was ${decision.toLowerCase()}` });
+                }
+            );
+        }
+    );
 };

@@ -23,6 +23,8 @@ import Documents from './employee/pages/Documents';
 import Settings from './employee/pages/Settings';
 import HRDashboard from './hr/pages/Dashboard';
 import HRPerformance from './hr/pages/Performance';
+import HREmployees from './hr/pages/Employees';
+import HRLeaveApproval from './hr/pages/LeaveApproval';
 import Recruitment from './hr/pages/Recruitment';
 import JobDetails from './hr/pages/JobDetails';
 import CandidateDetails from './hr/pages/CandidateDetails';
@@ -63,6 +65,8 @@ export default function App() {
 
         <Route path="/hr" element={<RequireAuth><HRShell /></RequireAuth>}>
           <Route index element={<HRDashboard />} />
+          <Route path="employees" element={<HREmployees />} />
+          <Route path="leave-approval" element={<HRLeaveApproval />} />
           <Route path="performance" element={<HRPerformance />} />
           <Route path="recruitment" element={<Recruitment />} />
           <Route path="job/:id" element={<JobDetails />} />
@@ -76,6 +80,7 @@ export default function App() {
           <Route path="payroll" element={<AdminPayroll />} />
           <Route path="audit-logs" element={<AuditLogs />} />
           <Route path="users" element={<UserManagement />} />
+          <Route path="employee-approvals" element={<HREmployees />} />
           <Route path="settings" element={<SystemSettings />} />
        </Route>
 
