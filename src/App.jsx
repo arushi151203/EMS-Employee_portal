@@ -6,6 +6,8 @@ import HRShell from './hr/components/HRShell';
 import AdminShell from './admin/components/AdminShell';
 
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './employee/pages/Dashboard';
 import Profile from './employee/pages/Profile';
 import Attendance from './employee/pages/Attendance';
@@ -40,6 +42,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route element={<RequireAuth><AppShell /></RequireAuth>}>
           <Route path="/dashboard" element={<Dashboard />} />

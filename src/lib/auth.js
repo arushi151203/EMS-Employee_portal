@@ -28,10 +28,18 @@ function setSession(user, token) {
   window.localStorage.setItem(TOKEN_KEY, token);
   setRole(user.role);
 }
+let cachedUser;
+let cachedUserRaw;
+
 function getUser() {
   if (typeof window === "undefined") return null;
   const raw = window.localStorage.getItem(USER_KEY);
-  return raw ? JSON.parse(raw) : null;
+  if (raw === cachedUserRaw) {
+    return cachedUser;
+  }
+  cachedUserRaw = raw;
+  cachedUser = raw ? JSON.parse(raw) : null;
+  return cachedUser;
 }
 function getToken() {
   if (typeof window === "undefined") return null;
@@ -54,6 +62,16 @@ function useRole() {
     () => "employee"
   );
 }
+function useUser() {
+  return useSyncExternalStore(
+    (l) => {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+    getUser,
+    () => null
+  );
+}
 const roleLabels = {
   employee: "Employee",
   hr: "HR Manager",
@@ -68,5 +86,6 @@ export {
   roleLabels,
   setRole,
   setSession,
-  useRole
+  useRole,
+  useUser
 };

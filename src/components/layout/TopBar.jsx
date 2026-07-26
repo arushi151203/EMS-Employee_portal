@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Search, LogOut, User, Settings as SettingsIcon, CheckCircle2, Trash2, X, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
-import { currentUser, notifications as seedNotifications } from "@/employee/lib/mock-data";
-import { useRole, logout, roleLabels } from "@/lib/auth";
+import { notifications as seedNotifications } from "@/employee/lib/mock-data";
+import { useRole, useUser, logout, roleLabels } from "@/lib/auth";
 import { useStore, uid } from "@/lib/store";
 import {
   DropdownMenu,
@@ -24,6 +24,10 @@ const seededNotifications = seedNotifications.map((n) => ({
 
 function TopBar() {
   const role = useRole();
+  const user = useUser();
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [confirmOut, setConfirmOut] = useState(false);
@@ -172,11 +176,11 @@ function TopBar() {
         <DropdownMenuTrigger asChild>
           <button className="hidden sm:flex items-center gap-2 pl-2 rounded-lg hover:bg-accent px-2 py-1">
             <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-primary text-xs font-semibold text-primary-foreground">
-              {currentUser.initials}
+              {initials}
             </div>
             <div className="hidden md:block leading-tight text-left">
               <div className="text-sm font-medium">
-                {currentUser.firstName} {currentUser.lastName}
+                {user?.name || "Guest"}
               </div>
               <div className="text-xs text-muted-foreground">{roleLabels[role]}</div>
             </div>
@@ -185,9 +189,9 @@ function TopBar() {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>
             <div className="font-medium">
-              {currentUser.firstName} {currentUser.lastName}
+              {user?.name || "Guest"}
             </div>
-            <div className="text-xs font-normal text-muted-foreground">{currentUser.email}</div>
+            <div className="text-xs font-normal text-muted-foreground">{user?.email || ""}</div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/profile")}>

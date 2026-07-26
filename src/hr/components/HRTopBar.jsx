@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Search, Bell, Sun, Moon } from "lucide-react";
-
-const currentHRUser = {
-  name: "Sarah Mitchell",
-  role: "HR Manager",
-  initials: "SM"
-};
+import { useUser, roleLabels } from "@/lib/auth";
 
 function HRTopBar() {
+  const user = useUser();
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
 
   const toggleDarkMode = () => {
@@ -48,11 +47,11 @@ function HRTopBar() {
 
         <div className="flex items-center gap-2.5">
           <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-            {currentHRUser.initials}
+            {initials}
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-medium">{currentHRUser.name}</div>
-            <div className="text-xs text-muted-foreground">{currentHRUser.role}</div>
+            <div className="text-sm font-medium">{user?.name || "Guest"}</div>
+            <div className="text-xs text-muted-foreground">{user ? roleLabels[user.role] : ""}</div>
           </div>
         </div>
       </div>

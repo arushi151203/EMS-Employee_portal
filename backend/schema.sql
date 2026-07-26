@@ -57,5 +57,17 @@ CREATE TABLE IF NOT EXISTS leave_requests (
     reviewed_at TIMESTAMP NULL
 );
 
+-- ---------------- PASSWORD RESET OTPS ----------------
+
+CREATE TABLE IF NOT EXISTS password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150) NOT NULL,
+    otp_code VARCHAR(6) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    verified TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Optional: quick test row so you can confirm the API works immediately
 -- INSERT INTO attendance (employee_id, attendance_date, status) VALUES ('EMP001', CURDATE(), 'Present');

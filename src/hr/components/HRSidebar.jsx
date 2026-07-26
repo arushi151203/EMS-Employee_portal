@@ -9,7 +9,7 @@ import {
   TrendingUp,
   LogOut
 } from "lucide-react";
-import { useRole, roleLabels, logout } from "@/lib/auth";
+import { useRole, useUser, roleLabels, logout } from "@/lib/auth";
 
 const navItems = [
   { label: "Overview", to: "/hr", icon: LayoutDashboard, end: true },
@@ -21,8 +21,12 @@ const navItems = [
 ];
 
 function HRSidebar() {
-  const navigate = useNavigate();
+const navigate = useNavigate();
   const role = useRole();
+  const user = useUser();
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
 
   const handleLogout = () => {
     logout();
@@ -65,10 +69,10 @@ function HRSidebar() {
       <div className="border-t border-border p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2">
           <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-primary text-xs font-semibold text-primary-foreground shrink-0">
-            SM
+            {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium">Sarah Mitchell</div>
+            <div className="truncate text-sm font-medium">{user?.name || "Guest"}</div>
             <div className="truncate text-xs text-muted-foreground">{roleLabels[role]}</div>
           </div>
           <button
