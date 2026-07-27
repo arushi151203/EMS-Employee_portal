@@ -1,9 +1,26 @@
 import { useEffect, useState } from "react";
-import { Users, UserCheck, UserX, Clock } from "lucide-react";
+import { Users, UserCheck, UserX, Clock, Search, Download } from "lucide-react";
 import { toast } from "sonner";
 import { StatusPill } from "@/components/common/StatusPill";
 import { getUser } from "@/lib/auth";
 import { getPendingApprovals, getAllEmployees, reviewSignup } from "@/lib/authService";
+
+const AVATAR_COLORS = ["#3B82F6", "#A855F7", "#10B981", "#F59E0B", "#EF4444", "#EC4899", "#06B6D4"];
+
+function initials(name) {
+  if (!name) return "?";
+  return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function avatarColor(id) {
+  const idx = String(id).split("").reduce((sum, c) => sum + c.charCodeAt(0), 0);
+  return AVATAR_COLORS[idx % AVATAR_COLORS.length];
+}
+
+function formatSalary(value) {
+  if (value === null || value === undefined) return "—";
+  return `$${Math.round(Number(value) / 1000)}k`;
+}
 
 function StatCard({ title, number, icon: Icon }) {
   return (
@@ -23,6 +40,7 @@ function Employees() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const [search, setSearch] = useState("");
 
   async function loadData() {
     setLoading(true);
@@ -60,6 +78,31 @@ function Employees() {
 
   const activeCount = employees.filter((e) => e.approval_status === "Approved").length;
   const rejectedCount = employees.filter((e) => e.approval_status === "Rejected").length;
+
+  const filteredEmployees = employees.filter((e) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      e.name?.toLowerCase().includes(q) ||
+      e.email?.toLowerCase().includes(q) ||
+      e.employee_id?.toLowerCase().includes(q)
+    );
+  });
+
+  function handleExport() {
+    const headers = ["Name", "Employee ID", "Email", "Role", "Department", "Status", "Salary"];
+    const rows = filteredEmployees.map((e) => [
+      e.name, e.employee_id, e.email, e.role, e.department || "", e.approval_status, e.salary ?? "",
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "employees.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div>
@@ -128,29 +171,69 @@ function Employees() {
       )}
 
       {/* Full directory */}
-      <h2 className="text-lg font-semibold mb-4">All Employees</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">All Employees</h2>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search employees..."
+              className="rounded-lg bg-input border border-border pl-8 pr-3 py-2 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-ring/60"
+            />
+          </div>
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-accent"
+          >
+            <Download size={14} /> Export
+          </button>
+        </div>
+      </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-surface text-muted-foreground text-left">
             <tr>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Employee ID</th>
+              <th className="px-4 py-3 font-medium">Employee</th>
+              <th className="px-4 py-3 font-medium">ID</th>
               <th className="px-4 py-3 font-medium">Role</th>
               <th className="px-4 py-3 font-medium">Department</th>
               <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Salary</th>
             </tr>
           </thead>
           <tbody>
-            {employees.map((e) => (
+            {filteredEmployees.map((e) => (
               <tr key={e.id} className="border-t border-border">
-                <td className="px-4 py-3">{e.name}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
+                      style={{ backgroundColor: avatarColor(e.employee_id) }}
+                    >
+                      {initials(e.name)}
+                    </div>
+                    <div>
+                      <p className="font-medium">{e.name}</p>
+                      <p className="text-xs text-muted-foreground">{e.email}</p>
+                    </div>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">{e.employee_id}</td>
                 <td className="px-4 py-3 capitalize">{e.role}</td>
                 <td className="px-4 py-3 text-muted-foreground">{e.department || "—"}</td>
                 <td className="px-4 py-3">
-                  <StatusPill status={e.approval_status.toLowerCase()} />
+                  <StatusPill
+                    status={
+                      e.approval_status === "Approved"
+                        ? (e.on_leave_today ? "on leave" : "active")
+                        : e.approval_status.toLowerCase()
+                    }
+                  />
                 </td>
+                <td className="px-4 py-3 text-muted-foreground">{formatSalary(e.salary)}</td>
               </tr>
             ))}
           </tbody>

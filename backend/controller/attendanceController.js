@@ -219,3 +219,54 @@ exports.getCalendarData = (req, res) => {
     });
 
 };
+// --------------DASHBOARD SUMMARY------------------
+// Last 6 months of "days present" + this month's attendance percentage
+
+exports.getSummary = (req, res) => {
+
+    const employeeId = String(req.params.employeeId);
+
+    const monthlySql = `
+        SELECT
+            DATE_FORMAT(attendance_date, '%b') AS month,
+            DATE_FORMAT(attendance_date, '%Y-%m') AS sort_key,
+            COUNT(CASE WHEN status='Present' THEN 1 END) AS days
+        FROM attendance
+        WHERE employee_id = ?
+        AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+        GROUP BY sort_key, month
+        ORDER BY sort_key
+    `;
+
+    const thisMonthSql = `
+        SELECT
+            COUNT(CASE WHEN status='Present' THEN 1 END) AS presentDays,
+            COUNT(*) AS totalDays
+        FROM attendance
+        WHERE employee_id = ?
+        AND MONTH(attendance_date) = MONTH(CURDATE())
+        AND YEAR(attendance_date) = YEAR(CURDATE())
+    `;
+
+    db.query(monthlySql, [employeeId], (err, monthlyRows) => {
+        if (err) {
+            console.log("ATTENDANCE SUMMARY MONTHLY ERROR:", err);
+            return res.status(500).json(err);
+        }
+
+        db.query(thisMonthSql, [employeeId], (err, thisMonthRows) => {
+            if (err) {
+                console.log("ATTENDANCE SUMMARY THIS MONTH ERROR:", err);
+                return res.status(500).json(err);
+            }
+
+            const { presentDays, totalDays } = thisMonthRows[0];
+            const percent = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+
+            res.json({
+                monthly: monthlyRows.map((r) => ({ month: r.month, days: r.days })),
+                thisMonthPercent: percent,
+            });
+        });
+    });
+};

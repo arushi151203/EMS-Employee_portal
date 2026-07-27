@@ -25,6 +25,7 @@ import HRDashboard from './hr/pages/Dashboard';
 import HRPerformance from './hr/pages/Performance';
 import HREmployees from './hr/pages/Employees';
 import HRLeaveApproval from './hr/pages/LeaveApproval';
+import HRDepartments from './hr/pages/Departments';
 import Recruitment from './hr/pages/Recruitment';
 import JobDetails from './hr/pages/JobDetails';
 import CandidateDetails from './hr/pages/CandidateDetails';
@@ -67,6 +68,7 @@ export default function App() {
           <Route index element={<HRDashboard />} />
           <Route path="employees" element={<HREmployees />} />
           <Route path="leave-approval" element={<HRLeaveApproval />} />
+          <Route path="departments" element={<HRDepartments />} />
           <Route path="performance" element={<HRPerformance />} />
           <Route path="recruitment" element={<Recruitment />} />
           <Route path="job/:id" element={<JobDetails />} />

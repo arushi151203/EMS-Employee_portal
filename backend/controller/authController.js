@@ -428,7 +428,13 @@ exports.getAllEmployees = (req, res) => {
 
     db.query(
         `SELECT e.id, e.employee_id, e.name, e.email, e.role, e.approval_status,
-                e.designation, e.phone, e.status, e.date_of_joining, d.name AS department
+                e.designation, e.phone, e.status, e.date_of_joining, e.salary, d.name AS department,
+                EXISTS(
+                  SELECT 1 FROM leave_requests lr
+                  WHERE lr.employee_id = e.employee_id
+                  AND lr.status='Approved'
+                  AND CURDATE() BETWEEN lr.start_date AND lr.end_date
+                ) AS on_leave_today
          FROM employees e
          LEFT JOIN departments d ON e.department_id = d.id
          ORDER BY e.created_at DESC`,

@@ -73,6 +73,37 @@ CREATE TABLE IF NOT EXISTS password_resets (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ---------------- EXTENDED PROFILE DETAILS ----------------
+
+CREATE TABLE IF NOT EXISTS employee_profile (
+    employee_id VARCHAR(50) PRIMARY KEY,
+    dob DATE NULL,
+    gender VARCHAR(20) NULL,
+    address VARCHAR(255) NULL,
+    city VARCHAR(100) NULL,
+    state VARCHAR(100) NULL,
+    zip_code VARCHAR(20) NULL,
+    country VARCHAR(100) NULL,
+    employment_type VARCHAR(50) DEFAULT 'Full Time',
+    manager VARCHAR(100) NULL,
+    work_location VARCHAR(100) NULL,
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
+-- ---------------- EMPLOYEE DOCUMENTS ----------------
+
+CREATE TABLE IF NOT EXISTS employee_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id VARCHAR(50) NOT NULL,
+    document_name VARCHAR(150) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    file_size INT NULL,
+    status ENUM('Approved','Pending','Expired') NOT NULL DEFAULT 'Pending',
+    expiry_date DATE NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
 ALTER TABLE password_resets ADD COLUMN purpose VARCHAR(20) NOT NULL DEFAULT 'reset';
 
 -- Optional: quick test row so you can confirm the API works immediately

@@ -25,3 +25,6 @@ export const getHistory = (employee_id) =>
 export const getCalendar = (employeeId, month, year) => {
   return API.get(`/calendar/${employeeId}?month=${month}&year=${year}`);
 };
+
+export const getSummary = (employeeId) =>
+  API.get(`/summary/${employeeId}`);

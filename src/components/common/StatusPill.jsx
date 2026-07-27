@@ -20,6 +20,7 @@ function StatusPill({
     processed: "success",
     resolved: "success",
     active: "success",
+    "on leave": "warning",
     healthy: "success",
     "in-progress": "info",
     "in progress": "info",
