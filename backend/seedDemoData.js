@@ -28,6 +28,7 @@ async function main() {
 
   const demoPassword = await bcrypt.hash("password123", 10);
 
+  // Exactly one demo account per role.
   const people = [
     {
       employee_id: "EMP101",
@@ -37,15 +38,6 @@ async function main() {
       department: "Engineering",
       designation: "Software Engineer",
       phone: "+91 98765 43210",
-    },
-    {
-      employee_id: "EMP102",
-      name: "Priya Sharma",
-      email: "priya.sharma@nexus.io",
-      role: "employee",
-      department: "Marketing",
-      designation: "Marketing Associate",
-      phone: "+91 98765 43211",
     },
     {
       employee_id: "HR101",
@@ -68,6 +60,26 @@ async function main() {
   ];
 
   for (const p of people) {
+    // --- Self-heal step 1 ---
+    // Some other employee_id may already be squatting on this email
+    // (e.g. a stray "Neha Verma / employee" row from an older/unrelated
+    // seed script). Since `email` is UNIQUE, that row must be cleared
+    // out first or the upsert below silently updates the wrong record.
+    await db.query("DELETE FROM employees WHERE email = ? AND employee_id <> ?", [
+      p.email,
+      p.employee_id,
+    ]);
+
+    // --- Self-heal step 2 ---
+    // This employee_id may already exist but with the WRONG email
+    // (e.g. HR101 previously renamed to a different address). Clear it
+    // so the upsert below can set the correct email cleanly.
+    await db.query("DELETE FROM employees WHERE employee_id = ? AND email <> ?", [
+      p.employee_id,
+      p.email,
+    ]);
+
+    // --- Upsert the correct row ---
     await db.query(
       `INSERT INTO employees (employee_id, name, email, password_hash, role, department_id, designation, phone, date_of_joining, status, approval_status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, '2023-06-01', 'Active', 'Approved')
@@ -77,16 +89,32 @@ async function main() {
          status='Active', approval_status='Approved'`,
       [p.employee_id, p.name, p.email, demoPassword, p.role, deptId(p.department), p.designation, p.phone]
     );
-    console.log(`✓ Employee: ${p.name} (${p.email})`);
+    console.log(`✓ ${p.role.toUpperCase()}: ${p.name} (${p.email})`);
   }
 
-  // Approve any existing pending accounts too (e.g. earlier demo seed)
+  // Remove the old second employee account (Priya Sharma) — only one
+  // account per role is wanted now.
+  await db.query("DELETE FROM employee_documents WHERE employee_id = 'EMP102'");
+  await db.query("DELETE FROM leave_requests WHERE employee_id = 'EMP102'");
+  await db.query("DELETE FROM attendance WHERE employee_id = 'EMP102'");
+  await db.query("DELETE FROM employee_profile WHERE employee_id = 'EMP102'");
+  await db.query("DELETE FROM employees WHERE employee_id = 'EMP102'");
+
+  // Approve any other pending accounts too (e.g. earlier demo seed)
   await db.query("UPDATE employees SET approval_status='Approved' WHERE approval_status='Pending'");
 
   // ---------------- Profile details ----------------
   const profileExtras = {
-    EMP101: { dob: "1996-03-14", gender: "Male", city: "Bengaluru", state: "Karnataka", country: "India", employment_type: "Full Time", manager: "Neha Verma", work_location: "Bengaluru HQ" },
-    EMP102: { dob: "1998-07-22", gender: "Female", city: "Mumbai", state: "Maharashtra", country: "India", employment_type: "Full Time", manager: "Neha Verma", work_location: "Mumbai Office" },
+    EMP101: {
+      dob: "1996-03-14",
+      gender: "Male",
+      city: "Bengaluru",
+      state: "Karnataka",
+      country: "India",
+      employment_type: "Full Time",
+      manager: "Neha Verma",
+      work_location: "Bengaluru HQ",
+    },
   };
 
   for (const [empId, d] of Object.entries(profileExtras)) {
@@ -101,7 +129,7 @@ async function main() {
   console.log("✓ Profile details added");
 
   // ---------------- Attendance (last 7 workdays) ----------------
-  await db.query("DELETE FROM attendance WHERE employee_id IN ('EMP101','EMP102')");
+  await db.query("DELETE FROM attendance WHERE employee_id = 'EMP101'");
 
   const today = new Date();
   let daysAdded = 0;
@@ -114,27 +142,30 @@ async function main() {
     if (dow === 0 || dow === 6) continue; // skip weekends
     const dateStr = d.toISOString().slice(0, 10);
 
-    for (const empId of ["EMP101", "EMP102"]) {
-      const checkIn = new Date(`${dateStr}T09:${empId === "EMP101" ? "05" : "20"}:00`);
-      const checkOut = new Date(`${dateStr}T18:${empId === "EMP101" ? "10" : "05"}:00`);
-      const workingSeconds = Math.floor((checkOut - checkIn) / 1000) - 1800;
-      await db.query(
-        `INSERT INTO attendance (employee_id, attendance_date, check_in, check_out, break_seconds, working_seconds, status)
-         VALUES (?, ?, ?, ?, 1800, ?, 'Present')`,
-        [empId, dateStr, checkIn.toISOString().slice(0, 19).replace("T", " "), checkOut.toISOString().slice(0, 19).replace("T", " "), workingSeconds]
-      );
-    }
+    const checkIn = new Date(`${dateStr}T09:05:00`);
+    const checkOut = new Date(`${dateStr}T18:10:00`);
+    const workingSeconds = Math.floor((checkOut - checkIn) / 1000) - 1800;
+    await db.query(
+      `INSERT INTO attendance (employee_id, attendance_date, check_in, check_out, break_seconds, working_seconds, status)
+       VALUES (?, ?, ?, ?, 1800, ?, 'Present')`,
+      [
+        "EMP101",
+        dateStr,
+        checkIn.toISOString().slice(0, 19).replace("T", " "),
+        checkOut.toISOString().slice(0, 19).replace("T", " "),
+        workingSeconds,
+      ]
+    );
     daysAdded++;
   }
   console.log("✓ Attendance history added (last 7 workdays)");
 
   // ---------------- Leave requests ----------------
-  await db.query("DELETE FROM leave_requests WHERE employee_id IN ('EMP101','EMP102')");
+  await db.query("DELETE FROM leave_requests WHERE employee_id = 'EMP101'");
 
   const leaveRows = [
     ["EMP101", "Annual Leave", "2026-06-10", "2026-06-12", "Family trip", "Approved", "HR101"],
     ["EMP101", "Sick Leave", "2026-07-02", "2026-07-02", "Fever", "Approved", "HR101"],
-    ["EMP102", "Casual Leave", "2026-08-05", "2026-08-06", "Personal work", "Pending", null],
   ];
   for (const row of leaveRows) {
     await db.query(
@@ -146,14 +177,12 @@ async function main() {
   console.log("✓ Leave requests added");
 
   // ---------------- Documents ----------------
-  await db.query("DELETE FROM employee_documents WHERE employee_id IN ('EMP101','EMP102')");
+  await db.query("DELETE FROM employee_documents WHERE employee_id = 'EMP101'");
 
   const docSets = [
     { empId: "EMP101", name: "Employment Contract.pdf", category: "contract" },
     { empId: "EMP101", name: "Offer Letter.pdf", category: "offer" },
     { empId: "EMP101", name: "June 2026 Payslip.pdf", category: "payslip" },
-    { empId: "EMP102", name: "Employment Contract.pdf", category: "contract" },
-    { empId: "EMP102", name: "NDA Agreement.pdf", category: "legal" },
   ];
 
   for (const doc of docSets) {
@@ -172,7 +201,6 @@ async function main() {
   console.log("\n=== Demo data seeded successfully ===\n");
   console.log("Login credentials (password for all: password123):");
   console.log("  Employee: rahul.kapoor@nexus.io");
-  console.log("  Employee: priya.sharma@nexus.io");
   console.log("  HR:       neha.verma@nexus.io");
   console.log("  Admin:    karan.mehta@nexus.io");
 }
