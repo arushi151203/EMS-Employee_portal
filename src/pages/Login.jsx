@@ -12,13 +12,26 @@ function Login() {
   const [role, setRole] = useState("employee");
   const [mode, setMode] = useState("password");
   const [showPass, setShowPass] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("rahul.kapoor@nexus.io");
+  const [password, setPassword] = useState("password123");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [showSupportModal, setShowSupportModal] = useState(false);
+
+  const roleCredentials = {
+    employee: { email: "rahul.kapoor@nexus.io", password: "password123" },
+    hr: { email: "neha.verma@nexus.io", password: "password123" },
+    admin: { email: "karan.mehta@nexus.io", password: "password123" },
+  };
+
+  const selectRole = (r) => {
+    setRole(r);
+    setEmail(roleCredentials[r].email);
+    setPassword(roleCredentials[r].password);
+    setEmailError("");
+  };
 
   const switchMode = (m) => {
     setMode(m);
@@ -101,7 +114,7 @@ function Login() {
         {["employee", "hr", "admin"].map((r) => (
           <button
             key={r}
-            onClick={() => setRole(r)}
+            onClick={() => selectRole(r)}
             className={`rounded-lg py-2 capitalize transition ${role === r ? "bg-surface-elevated text-foreground shadow-sm" : "text-muted-foreground"}`}
           >
             {r === "hr" ? "HR" : r}
