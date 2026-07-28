@@ -105,11 +105,14 @@
   gap: 10px;
 }
 
-.status-badge {
+.category-tag {
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 20px;
   font-weight: 500;
+  background: var(--bg-input, rgba(255,255,255,0.08));
+  color: var(--text-secondary);
+  text-transform: lowercase;
 }
 
 .status-badge.approved {

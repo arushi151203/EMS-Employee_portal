@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { AppShell } from '@/components/layout/AppShell';
-import { isAuthenticated } from '@/lib/auth';
+import { isAuthenticated, getRole } from '@/lib/auth';
 import HRShell from './hr/components/HRShell';
 import AdminShell from './admin/components/AdminShell';
+import AccessDenied from './pages/AccessDenied';
 
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -40,6 +41,13 @@ function RequireAuth({ children }) {
   return isAuthenticated() ? children : <Navigate to="/" replace />;
 }
 
+function RequireRole({ children, allow }) {
+  if (!isAuthenticated()) return <Navigate to="/" replace />;
+  const role = getRole();
+  if (!allow.includes(role)) return <Navigate to="/access-denied" replace />;
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -47,6 +55,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/access-denied" element={<AccessDenied />} />
 
         <Route element={<RequireAuth><AppShell /></RequireAuth>}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -64,7 +73,7 @@ export default function App() {
           <Route path="/settings" element={<Settings />} />
         </Route>
 
-        <Route path="/hr" element={<RequireAuth><HRShell /></RequireAuth>}>
+        <Route path="/hr" element={<RequireRole allow={["hr", "admin"]}><HRShell /></RequireRole>}>
           <Route index element={<HRDashboard />} />
           <Route path="employees" element={<HREmployees />} />
           <Route path="leave-approval" element={<HRLeaveApproval />} />
@@ -75,7 +84,7 @@ export default function App() {
           <Route path="candidate/:id" element={<CandidateDetails />} />
         </Route>
 
-       <Route path="/admin" element={<RequireAuth><AdminShell /></RequireAuth>}>
+       <Route path="/admin" element={<RequireRole allow={["admin"]}><AdminShell /></RequireRole>}>
           <Route index element={<Analytics />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="reports" element={<Reports />} />

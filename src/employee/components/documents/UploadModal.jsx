@@ -1,25 +1,48 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { uploadDocument } from "@/employee/services/documentsService";
 
-function UploadModal({ show, onClose, onSave }) {
+function UploadModal({ show, onClose, onUploaded }) {
   const [document, setDocument] = useState("");
-  const [status, setStatus] = useState("Approved");
-  const [expiry, setExpiry] = useState("");
+  const [category, setCategory] = useState("other");
   const [file, setFile] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   if (!show) return null;
 
-  const handleSave = () => {
+  const resetForm = () => {
+    setDocument("");
+    setCategory("other");
+    setFile(null);
+  };
+
+  const handleSave = async () => {
     if (document === "") {
       toast.error("Enter Document Name");
       return;
     }
-    const size = file ? `${Math.round(file.size / 1024)} KB` : "—";
-    onSave({ document, status, expiry, file, size });
-    setDocument("");
-    setStatus("Approved");
-    setExpiry("");
-    setFile(null);
+    if (!file) {
+      toast.error("Please choose a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("document", document);
+    formData.append("category", category);
+    formData.append("file", file);
+
+    setSaving(true);
+    try {
+      await uploadDocument(formData);
+      toast.success("Document uploaded successfully");
+      resetForm();
+      onUploaded();
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Upload failed. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -33,17 +56,15 @@ function UploadModal({ show, onClose, onSave }) {
         </div>
 
         <div className="form-group">
-          <label>Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option>Approved</option>
-            <option>Pending</option>
-            <option>Expired</option>
+          <label>Category</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="contract">Contract</option>
+            <option value="offer">Offer</option>
+            <option value="legal">Legal</option>
+            <option value="performance">Performance</option>
+            <option value="payslip">Payslip</option>
+            <option value="other">Other</option>
           </select>
-        </div>
-
-        <div className="form-group">
-          <label>Expiry Date</label>
-          <input type="date" value={expiry} onChange={(e) => setExpiry(e.target.value)} />
         </div>
 
         <div className="form-group">
@@ -53,7 +74,9 @@ function UploadModal({ show, onClose, onSave }) {
 
         <div className="modal-buttons">
           <button className="cancel-btn" onClick={onClose}>Cancel</button>
-          <button className="save-btn" onClick={handleSave}>Upload</button>
+          <button className="save-btn" onClick={handleSave} disabled={saving}>
+            {saving ? "Uploading..." : "Upload"}
+          </button>
         </div>
       </div>
     </div>
