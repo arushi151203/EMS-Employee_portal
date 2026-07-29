@@ -1,7 +1,10 @@
-import "./AttendanceStatus.css";
 import { useState, useEffect } from "react";
-import {Coffee, Clock3} from "lucide-react";
-import {checkIn, checkOut, getToday, updateBreak} from "./services/attendanceService";
+import { Coffee, Clock3 } from "lucide-react";
+import { checkIn, checkOut, getToday, updateBreak } from "./services/attendanceService";
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 const employeeId = "EMP001";
 
 function AttendanceStatus() {
@@ -163,88 +166,76 @@ async function handleCheckOut() {
   const dayCompleted = !!(attendance && attendance.check_in && attendance.check_out);
 
   return (
-    <div className="card attendance-status">
-
-      <div className="clock-wrapper">
-
-        <div className="clock-circle">
-
-          <Clock3 size={60} strokeWidth={1.2} />
-
-        </div>
-
+    <Card className="flex flex-col items-center p-6 text-center">
+      <div className="grid size-24 place-items-center rounded-full bg-primary/10 text-primary">
+        <Clock3 size={48} strokeWidth={1.2} />
       </div>
 
       {/* Status */}
-
-      <div className={`status-badge ${checkedIn ? "checked-in" : "not-checked"}`}>
+      <div
+        className={`mt-4 rounded-full px-3 py-1 text-xs font-medium ${
+          checkedIn ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+        }`}
+      >
         {checkedIn ? "Checked In" : "Not Checked In"}
       </div>
 
-      {infoMessage && (
-        <p className="info-message">{infoMessage}</p>
-      )}
+      {infoMessage && <p className="mt-2 text-xs text-warning">{infoMessage}</p>}
 
       {/* Date */}
-
-      <p className="today-date">
-        {currentDate}
-      </p>
+      <p className="mt-3 text-sm text-muted-foreground">{currentDate}</p>
 
       {/* Buttons */}
-
-      <div className="attendance-buttons">
-
-        <button
-          className={checkedIn ? "checkout-btn" : "checkin-btn"}
+      <div className="mt-5 flex w-full gap-3">
+        <Button
+          className="flex-1"
+          variant={checkedIn ? "destructive" : "default"}
           disabled={isProcessing || dayCompleted}
-          onClick={checkedIn ? handleCheckOut : handleCheckIn}>
+          onClick={checkedIn ? handleCheckOut : handleCheckIn}
+        >
           {isProcessing ? "..." : dayCompleted ? "Completed for Today" : (checkedIn ? "Check Out" : "Check In")}
+        </Button>
 
-        </button>
-
-        <button className="secondary-btn" disabled={!checkedIn} onClick={handleBreak}>
-
+        <Button variant="outline" disabled={!checkedIn} onClick={handleBreak}>
           <Coffee size={18} />
-
           {onBreak ? "Resume" : "Break"}
-
-        </button>
-
+        </Button>
       </div>
 
       {/* Summary */}
-      <div className="attendance-details">
-
-        <div className="detail-row">
-          <span>Check In</span>
-          <strong>{checkInTime}</strong>
+      <div className="mt-6 w-full space-y-2.5 border-t border-border pt-5 text-left">
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Check In</span>
+          <strong className="font-medium">{checkInTime}</strong>
         </div>
 
-        <div className="detail-row">
-          <span>Check Out</span>
-          <strong>{checkOutTime}</strong>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Check Out</span>
+          <strong className="font-medium">{checkOutTime}</strong>
         </div>
 
-        <div className="detail-row">
-          <span>Break</span>
-          <strong>{formatTime(breakSeconds)}</strong>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Break</span>
+          <strong className="font-medium">{formatTime(breakSeconds)}</strong>
         </div>
 
-        <div className="detail-row">
-          <span>Working Hours</span>
-          <strong>{workingHours}</strong>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Working Hours</span>
+          <strong className="font-medium">{workingHours}</strong>
         </div>
 
-        <div className="detail-row">
-          <span>Status</span>
-
-          <strong className={attendance && attendance.status === "Present" ? "status-present" : "status-absent"}>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Status</span>
+          <strong
+            className={`font-medium ${
+              attendance && attendance.status === "Present" ? "text-success" : "text-destructive"
+            }`}
+          >
             {attendance && attendance.status ? attendance.status : "Absent"}
           </strong>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 export default AttendanceStatus;

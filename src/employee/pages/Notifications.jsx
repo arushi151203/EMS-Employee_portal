@@ -20,7 +20,7 @@ function Notifications() {
           <button
             key={c}
             onClick={() => setCat(c)}
-            className={`rounded-full px-3 py-1.5 text-xs ${cat === c ? "bg-gradient-primary text-primary-foreground" : "bg-surface border border-border text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-full px-3 py-1.5 text-xs ${cat === c ? "bg-primary text-primary-foreground" : "bg-surface border border-border text-muted-foreground hover:text-foreground"}`}
           >
             {c}
           </button>

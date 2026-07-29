@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Users, Briefcase, CalendarClock, CheckCircle2 } from "lucide-react";
-import StatCard from "../components/recruitment/StatCard";
+import { StatCard } from "@/components/common/StatCard";
+import { StatusPill } from "@/components/common/StatusPill";
+import { Button } from "@/components/ui/button";
 import { jobs, candidates } from "../data/recruitmentData";
 
-const statusStyles = {
-  Interviewing: "bg-blue-500/15 text-blue-400",
-  Screening: "bg-yellow-500/15 text-yellow-400",
-  Offer: "bg-green-500/15 text-green-400",
-  Applied: "bg-muted text-muted-foreground",
+const stageTone = {
+  Interviewing: "info",
+  Screening: "warning",
+  Offer: "success",
+  Applied: "muted",
 };
 
 function Recruitment() {
@@ -25,16 +27,14 @@ function Recruitment() {
           <h1 className="text-2xl font-bold">Recruitment</h1>
           <p className="text-sm text-muted-foreground mt-1">Job openings and candidate pipeline</p>
         </div>
-        <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90">
-          + Post Job
-        </button>
+        <Button>+ Post Job</Button>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Candidates" number={candidates.length} icon={Users} />
-        <StatCard title="Open Roles" number={jobs.length} icon={Briefcase} />
-        <StatCard title="Interviews This Week" number={pipelineCounts["Interviewing"] || 0} icon={CalendarClock} />
-        <StatCard title="Offers Extended" number={pipelineCounts["Offer"] || 0} icon={CheckCircle2} />
+      <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total Candidates" value={candidates.length} icon={<Users size={16} />} />
+        <StatCard label="Open Roles" value={jobs.length} icon={<Briefcase size={16} />} />
+        <StatCard label="Interviews This Week" value={pipelineCounts["Interviewing"] || 0} icon={<CalendarClock size={16} />} />
+        <StatCard label="Offers Extended" value={pipelineCounts["Offer"] || 0} icon={<CheckCircle2 size={16} />} tone="success" />
       </div>
 
       <h2 className="text-lg font-semibold mb-4">Active Job Openings</h2>
@@ -50,27 +50,22 @@ function Recruitment() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{job.candidateIds.length} Candidates</span>
-              <span className={`text-xs font-medium px-3 py-1 rounded-full ${statusStyles[job.status]}`}>
-                {job.status}
-              </span>
-              <button
-                onClick={() => navigate(`/hr/job/${job.id}`)}
-                className="rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-accent"
-              >
+              <StatusPill status={job.status.toLowerCase()} tone={stageTone[job.status]} />
+              <Button variant="outline" size="sm" onClick={() => navigate(`/hr/job/${job.id}`)}>
                 View
-              </button>
+              </Button>
             </div>
           </div>
         ))}
       </div>
 
       <h2 className="text-lg font-semibold mb-4">Candidate Pipeline</h2>
-     <div className="grid grid-cols-4 gap-4 mb-8">
-        <StatCard title="Applied" number={pipelineCounts["Applied"] || 0} icon={Users} tint="bg-muted/40" />
-        <StatCard title="Screening" number={pipelineCounts["Screening"] || 0} icon={Users} tint="bg-yellow-500/10" />
-        <StatCard title="Interview" number={pipelineCounts["Interviewing"] || 0} icon={Users} tint="bg-blue-500/10" />
-        <StatCard title="Offers" number={pipelineCounts["Offer"] || 0} icon={Users} tint="bg-green-500/10" />
-     </div>
+      <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Applied" value={pipelineCounts["Applied"] || 0} icon={<Users size={16} />} />
+        <StatCard label="Screening" value={pipelineCounts["Screening"] || 0} icon={<Users size={16} />} tone="warning" />
+        <StatCard label="Interview" value={pipelineCounts["Interviewing"] || 0} icon={<Users size={16} />} tone="info" />
+        <StatCard label="Offers" value={pipelineCounts["Offer"] || 0} icon={<Users size={16} />} tone="success" />
+      </div>
 
       <div className="space-y-3">
         {candidates.slice(0, 6).map((c) => (
@@ -85,9 +80,7 @@ function Recruitment() {
                 {jobs.find((j) => j.id === c.jobId)?.title}
               </p>
             </div>
-            <span className={`text-xs font-medium px-3 py-1 rounded-full ${statusStyles[c.stage]}`}>
-              {c.stage}
-            </span>
+            <StatusPill status={c.stage.toLowerCase()} tone={stageTone[c.stage]} />
           </div>
         ))}
       </div>

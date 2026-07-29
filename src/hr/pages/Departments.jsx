@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Building2, Plus, Pencil, X } from "lucide-react";
+import { Building2, Plus, Pencil } from "lucide-react";
 import { getDepartments, createDepartment, updateDepartment } from "../services/departmentsService";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 function formatBudget(value) {
   if (value === null || value === undefined) return "—";
@@ -90,12 +96,9 @@ export default function Departments() {
           <h1 className="text-2xl font-bold">Departments</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage teams and organizational structure</p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90"
-        >
+        <Button onClick={openCreateModal}>
           <Plus size={16} /> New Department
-        </button>
+        </Button>
       </div>
 
       {loading ? (
@@ -105,9 +108,9 @@ export default function Departments() {
           No departments yet. Add one to get started.
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {departments.map((d) => (
-            <div key={d.id} className="rounded-2xl border border-border bg-card p-5">
+            <Card key={d.id} className="p-5">
               <div className="flex items-start justify-between">
                 <div className="h-10 w-10 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
                   <Building2 size={20} />
@@ -131,76 +134,46 @@ export default function Departments() {
               </div>
 
               <div className="mt-4 flex items-center gap-2">
-                <button
-                  onClick={() => navigate("/hr/employees")}
-                  className="flex-1 rounded-lg border border-border py-2 text-sm font-medium hover:bg-accent"
-                >
+                <Button variant="outline" className="flex-1" onClick={() => navigate("/hr/employees")}>
                   View Team
-                </button>
-                <button
-                  onClick={() => openEditModal(d)}
-                  className="h-9 w-9 rounded-lg border border-border flex items-center justify-center hover:bg-accent"
-                >
+                </Button>
+                <Button variant="outline" size="icon" onClick={() => openEditModal(d)}>
                   <Pencil size={14} />
-                </button>
+                </Button>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">{editingDept ? "Edit Department" : "New Department"}</h2>
-              <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-foreground">
-                <X size={18} />
-              </button>
-            </div>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingDept ? "Edit Department" : "New Department"}</DialogTitle>
+          </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Department Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Field>
+              <FieldLabel>Department Name</FieldLabel>
+              <Input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </Field>
 
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Department Head</label>
-                <input
-                  type="text"
-                  value={headName}
-                  onChange={(e) => setHeadName(e.target.value)}
-                  className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                />
-              </div>
+            <Field>
+              <FieldLabel>Department Head</FieldLabel>
+              <Input type="text" value={headName} onChange={(e) => setHeadName(e.target.value)} />
+            </Field>
 
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Budget ($)</label>
-                <input
-                  type="number"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                />
-              </div>
+            <Field>
+              <FieldLabel>Budget ($)</FieldLabel>
+              <Input type="number" value={budget} onChange={(e) => setBudget(e.target.value)} />
+            </Field>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-medium hover:opacity-90 disabled:opacity-60"
-              >
-                {isSubmitting ? "Saving..." : editingDept ? "Save Changes" : "Create Department"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Saving..." : editingDept ? "Save Changes" : "Create Department"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

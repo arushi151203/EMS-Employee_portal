@@ -1,7 +1,20 @@
-import "./AttendanceCalendar.css";
 import { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCalendar } from "./services/attendanceService";
+
+import { Card } from "@/components/ui/card";
+
+const statusStyles = {
+  present: "bg-success/[0.18] border-success/40",
+  absent: "bg-destructive/[0.18] border-destructive/40",
+  late: "bg-warning/[0.18] border-warning/40",
+};
+
+const dotStyles = {
+  present: "bg-success",
+  absent: "bg-destructive",
+  late: "bg-warning",
+};
 
 function AttendanceCalendar() {
 
@@ -90,23 +103,23 @@ function AttendanceCalendar() {
 
   return (
 
-    <div className="attendance-calendar">
+    <Card className="p-5">
 
       {/* Header */}
 
-      <div className="calendar-header">
+      <div className="flex items-center justify-between text-sm font-medium">
 
         <button
-          className="calendar-nav-btn"
+          className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
           onClick={previousMonth}
         >
           <ChevronLeft size={14} />
         </button>
-        
-          {monthName} {year}
+
+        <span>{monthName} {year}</span>
 
         <button
-          className="calendar-nav-btn"
+          className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
           onClick={nextMonth}
         >
           <ChevronRight size={14} />
@@ -116,23 +129,23 @@ function AttendanceCalendar() {
 
       {/* Calendar */}
 
-      <div className="calendar-grid-wrapper">
+      <div className="mt-4">
 
         {/* Weekday header */}
 
-        <div className="calendar-grid weekday-header">
+        <div className="grid grid-cols-7 gap-1.5">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-            <div key={d} className="calendar-weekday-label">{d}</div>
+            <div key={d} className="pb-1 text-center text-xs text-muted-foreground">{d}</div>
           ))}
         </div>
 
         {/* Dates */}
 
-        <div className="calendar-grid">
+        <div className="grid grid-cols-7 gap-1.5">
 
           {cells.map((cell, index) => {
 
-            if (!cell) return <div key={index} className="calendar-card empty" />;
+            if (!cell) return <div key={index} className="aspect-square" />;
 
             const cellDate = new Date(year, month, cell.day);
 
@@ -146,13 +159,13 @@ function AttendanceCalendar() {
 
               <div
                 key={index}
-                className={`calendar-card
-                ${cell.status}
-                ${isToday ? "today" : ""}
-                ${isFuture ? "future" : ""}
+                className={`grid aspect-square place-items-center rounded-lg border text-xs
+                ${statusStyles[cell.status] || "border-border bg-transparent"}
+                ${isToday ? "!border-primary !bg-primary text-primary-foreground" : ""}
+                ${isFuture ? "opacity-35" : ""}
                 `}>
 
-                <span className="calendar-date">
+                <span>
                   {cell.day}
                 </span>
 
@@ -166,35 +179,26 @@ function AttendanceCalendar() {
 
       {/* Legend */}
 
-      <div className="calendar-legend">
+      <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
 
-        <div>
-
-          <span className="dot present"></span>
-
+        <div className="flex items-center gap-1.5">
+          <span className={`size-2 rounded-full ${dotStyles.present}`}></span>
           Present
-
         </div>
 
-        <div>
-
-          <span className="dot absent"></span>
-
+        <div className="flex items-center gap-1.5">
+          <span className={`size-2 rounded-full ${dotStyles.absent}`}></span>
           Absent
-
         </div>
 
-        <div>
-
-          <span className="dot late"></span>
-
+        <div className="flex items-center gap-1.5">
+          <span className={`size-2 rounded-full ${dotStyles.late}`}></span>
           Late
-
         </div>
 
       </div>
 
-    </div>
+    </Card>
 
   );
 

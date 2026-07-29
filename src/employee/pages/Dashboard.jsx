@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusPill } from "@/components/common/StatusPill";
+import { Button } from "@/components/ui/button";
 import { getUser } from "@/lib/auth";
 import { checkIn, checkOut, getToday, getSummary } from "@/employee/components/Attendance/services/attendanceService";
 import { getMyLeaves } from "@/employee/services/leaveService";
@@ -130,16 +131,14 @@ function Dashboard() {
               : "You haven't checked in yet today."}
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <button
+            <Button
               onClick={handlePunch}
               disabled={isProcessing || dayCompleted}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-glow transition disabled:opacity-60 disabled:cursor-not-allowed ${
-                isCheckedIn ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-gradient-primary text-primary-foreground"
-              }`}
+              variant={isCheckedIn ? "destructive" : "default"}
             >
               {isCheckedIn ? <LogOutIcon className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
               {dayCompleted ? "Completed for Today" : isProcessing ? "..." : isCheckedIn ? "Check Out" : "Check In"}
-            </button>
+            </Button>
             <Link
               to="/leave"
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium hover:bg-surface-elevated"

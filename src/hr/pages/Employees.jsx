@@ -2,6 +2,17 @@ import { useEffect, useState } from "react";
 import { Users, UserCheck, UserX, Clock, Search, Download } from "lucide-react";
 import { toast } from "sonner";
 import { StatusPill } from "@/components/common/StatusPill";
+import { StatCard } from "@/components/common/StatCard";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableHead,
+  DataTableBody,
+  DataTableRow,
+  DataTableHeadCell,
+  DataTableCell,
+} from "@/components/ui/data-table";
 import { getUser } from "@/lib/auth";
 import { getPendingApprovals, getAllEmployees, reviewSignup } from "@/lib/authService";
 
@@ -20,18 +31,6 @@ function avatarColor(id) {
 function formatSalary(value) {
   if (value === null || value === undefined) return "—";
   return `$${Math.round(Number(value) / 1000)}k`;
-}
-
-function StatCard({ title, number, icon: Icon }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-4 flex items-center justify-between">
-      <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="text-2xl font-bold mt-1">{number}</p>
-      </div>
-      <Icon className="h-8 w-8 text-muted-foreground" />
-    </div>
-  );
 }
 
 function Employees() {
@@ -113,11 +112,11 @@ function Employees() {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Accounts" number={employees.length} icon={Users} />
-        <StatCard title="Pending Approval" number={pending.length} icon={Clock} />
-        <StatCard title="Active" number={activeCount} icon={UserCheck} />
-        <StatCard title="Rejected" number={rejectedCount} icon={UserX} />
+      <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total Accounts" value={employees.length} icon={<Users size={16} />} />
+        <StatCard label="Pending Approval" value={pending.length} icon={<Clock size={16} />} tone="warning" />
+        <StatCard label="Active" value={activeCount} icon={<UserCheck size={16} />} tone="success" />
+        <StatCard label="Rejected" value={rejectedCount} icon={<UserX size={16} />} tone="danger" />
       </div>
 
       {/* Pending approvals */}
@@ -148,20 +147,23 @@ function Employees() {
                   <span className="text-xs text-muted-foreground">Only Admin can review HR signups</span>
                 ) : (
                   <>
-                    <button
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="bg-success/15 text-success hover:bg-success/25"
                       disabled={processingId === p.id}
                       onClick={() => handleReview(p.id, "Approved")}
-                      className="rounded-lg bg-success/15 text-success border border-success/25 px-3 py-1.5 text-sm font-medium hover:opacity-80 disabled:opacity-50"
                     >
                       Approve
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
                       disabled={processingId === p.id}
                       onClick={() => handleReview(p.id, "Rejected")}
-                      className="rounded-lg bg-destructive/15 text-destructive border border-destructive/25 px-3 py-1.5 text-sm font-medium hover:opacity-80 disabled:opacity-50"
                     >
                       Reject
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>
@@ -183,31 +185,28 @@ function Employees() {
               className="rounded-lg bg-input border border-border pl-8 pr-3 py-2 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-ring/60"
             />
           </div>
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-accent"
-          >
+          <Button variant="outline" onClick={handleExport}>
             <Download size={14} /> Export
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-surface text-muted-foreground text-left">
-            <tr>
-              <th className="px-4 py-3 font-medium">Employee</th>
-              <th className="px-4 py-3 font-medium">ID</th>
-              <th className="px-4 py-3 font-medium">Role</th>
-              <th className="px-4 py-3 font-medium">Department</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Salary</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Card className="overflow-hidden p-0">
+        <DataTable className="border-0">
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableHeadCell>Employee</DataTableHeadCell>
+              <DataTableHeadCell>ID</DataTableHeadCell>
+              <DataTableHeadCell>Role</DataTableHeadCell>
+              <DataTableHeadCell>Department</DataTableHeadCell>
+              <DataTableHeadCell>Status</DataTableHeadCell>
+              <DataTableHeadCell>Salary</DataTableHeadCell>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
             {filteredEmployees.map((e) => (
-              <tr key={e.id} className="border-t border-border">
-                <td className="px-4 py-3">
+              <DataTableRow key={e.id}>
+                <DataTableCell>
                   <div className="flex items-center gap-3">
                     <div
                       className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
@@ -220,11 +219,11 @@ function Employees() {
                       <p className="text-xs text-muted-foreground">{e.email}</p>
                     </div>
                   </div>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{e.employee_id}</td>
-                <td className="px-4 py-3 capitalize">{e.role}</td>
-                <td className="px-4 py-3 text-muted-foreground">{e.department || "—"}</td>
-                <td className="px-4 py-3">
+                </DataTableCell>
+                <DataTableCell className="text-muted-foreground">{e.employee_id}</DataTableCell>
+                <DataTableCell className="capitalize">{e.role}</DataTableCell>
+                <DataTableCell className="text-muted-foreground">{e.department || "—"}</DataTableCell>
+                <DataTableCell>
                   <StatusPill
                     status={
                       e.approval_status === "Approved"
@@ -232,13 +231,13 @@ function Employees() {
                         : e.approval_status.toLowerCase()
                     }
                   />
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{formatSalary(e.salary)}</td>
-              </tr>
+                </DataTableCell>
+                <DataTableCell className="text-muted-foreground">{formatSalary(e.salary)}</DataTableCell>
+              </DataTableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </DataTableBody>
+        </DataTable>
+      </Card>
     </div>
   );
 }

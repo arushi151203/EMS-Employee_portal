@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const currentUser = {
   firstName: "John",
@@ -38,9 +41,7 @@ function Settings() {
               <Field label="Email" value={currentUser.email} />
               <Field label="Phone" value={currentUser.phone} />
               <Field label="Time Zone" value={currentUser.timezone} />
-              <button className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow">
-                Save Account
-              </button>
+              <Button>Save Account</Button>
             </div>
           )}
 
@@ -78,12 +79,15 @@ function Settings() {
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-muted-foreground">Language</label>
-                <select className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm">
-                  <option>English (US)</option>
-                  <option>Español</option>
-                  <option>Français</option>
-                  <option>Deutsch</option>
-                </select>
+                <Select defaultValue="English (US)">
+                  <SelectTrigger className="mt-1" />
+                  <SelectContent>
+                    <SelectItem value="English (US)">English (US)</SelectItem>
+                    <SelectItem value="Español">Español</SelectItem>
+                    <SelectItem value="Français">Français</SelectItem>
+                    <SelectItem value="Deutsch">Deutsch</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-xs text-muted-foreground">Theme</label>
@@ -108,11 +112,7 @@ function Field({ label, value, type = "text" }) {
   return (
     <label className="block">
       <div className="mb-1 text-xs text-muted-foreground">{label}</div>
-      <input
-        type={type}
-        defaultValue={value}
-        className="w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-      />
+      <Input type={type} defaultValue={value} />
     </label>
   );
 }

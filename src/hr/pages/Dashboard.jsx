@@ -88,7 +88,7 @@ export default function HRDashboard() {
         <p className="text-sm text-muted-foreground mt-1">Company-wide workforce summary</p>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total Employees"
           value={loading ? "…" : summary?.totalEmployees ?? 0}
@@ -115,7 +115,7 @@ export default function HRDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 gap-6 mb-8 xl:grid-cols-3">
 
         <div className="col-span-2 rounded-2xl border border-border bg-card p-6">
           <h2 className="font-semibold mb-4">Attendance by Department — Today</h2>
@@ -125,7 +125,7 @@ export default function HRDashboard() {
               <XAxis dataKey="department" stroke="var(--muted-foreground)" fontSize={12} />
               <YAxis stroke="var(--muted-foreground)" fontSize={12} domain={[0, 100]} unit="%" />
               <Tooltip />
-              <Bar dataKey="attendance" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="attendance" fill="var(--primary)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

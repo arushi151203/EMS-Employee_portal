@@ -1,10 +1,8 @@
-import "./PerformanceHeader.css";
-
 const PerformanceHeader = () => {
   return (
-    <div className="performance-header">
-      <h1>Performance</h1>
-      <p>
+    <div>
+      <h1 className="text-2xl font-bold">Performance</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         Monitor employee reviews, evaluate department performance,
         and track upcoming review cycles.
       </p>

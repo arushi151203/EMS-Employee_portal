@@ -3,6 +3,16 @@ import { toast } from "sonner";
 import { CalendarCheck, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusPill } from "@/components/common/StatusPill";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableHead,
+  DataTableBody,
+  DataTableRow,
+  DataTableHeadCell,
+  DataTableCell,
+} from "@/components/ui/data-table";
 import { getAllLeaves, reviewLeave } from "@/employee/services/leaveService";
 
 function daysBetween(start, end) {
@@ -77,7 +87,7 @@ export default function LeaveApproval() {
         <p className="text-sm text-muted-foreground mt-1">Review and action pending leave requests</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
         <StatCard label="Pending" value={pending.length} icon={<Clock size={16} />} tone="warning" />
         <StatCard label="Approved This Month" value={approvedThisMonth} icon={<CheckCircle2 size={16} />} tone="success" />
         <StatCard label="Rejected" value={rejectedCount} icon={<XCircle size={16} />} tone="danger" />
@@ -111,27 +121,30 @@ export default function LeaveApproval() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <button
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-success/15 text-success hover:bg-success/25"
                   disabled={processingId === l.id}
                   onClick={() => handleReview(l.id, "Approved")}
-                  className="rounded-lg bg-success/15 text-success border border-success/25 px-3 py-1.5 text-sm font-medium hover:opacity-80 disabled:opacity-50"
                 >
                   Approve
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
                   disabled={processingId === l.id}
                   onClick={() => handleReview(l.id, "Rejected")}
-                  className="rounded-lg bg-destructive/15 text-destructive border border-destructive/25 px-3 py-1.5 text-sm font-medium hover:opacity-80 disabled:opacity-50"
                 >
                   Reject
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <div className="p-5 border-b border-border">
           <h2 className="font-semibold">Recently Processed</h2>
         </div>
@@ -139,37 +152,37 @@ export default function LeaveApproval() {
         {recentlyProcessed.length === 0 ? (
           <p className="p-5 text-sm text-muted-foreground">Nothing processed yet.</p>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-surface text-muted-foreground text-left">
-              <tr>
-                <th className="px-4 py-3 font-medium">Employee</th>
-                <th className="px-4 py-3 font-medium">Type</th>
-                <th className="px-4 py-3 font-medium">Dates</th>
-                <th className="px-4 py-3 font-medium">Days</th>
-                <th className="px-4 py-3 font-medium">Action</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
+          <DataTable className="border-0">
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableHeadCell>Employee</DataTableHeadCell>
+                <DataTableHeadCell>Type</DataTableHeadCell>
+                <DataTableHeadCell>Dates</DataTableHeadCell>
+                <DataTableHeadCell>Days</DataTableHeadCell>
+                <DataTableHeadCell>Action</DataTableHeadCell>
+                <DataTableHeadCell>Status</DataTableHeadCell>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {recentlyProcessed.map((l) => (
-                <tr key={l.id} className="border-t border-border">
-                  <td className="px-4 py-3">{l.employee_name || l.employee_id}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{l.leave_type}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
+                <DataTableRow key={l.id}>
+                  <DataTableCell>{l.employee_name || l.employee_id}</DataTableCell>
+                  <DataTableCell className="text-muted-foreground">{l.leave_type}</DataTableCell>
+                  <DataTableCell className="text-muted-foreground">
                     {new Date(l.start_date).toLocaleDateString()}
                     {l.start_date !== l.end_date && ` – ${new Date(l.end_date).toLocaleDateString()}`}
-                  </td>
-                  <td className="px-4 py-3">{daysBetween(l.start_date, l.end_date)}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{l.reviewed_by || "—"}</td>
-                  <td className="px-4 py-3">
+                  </DataTableCell>
+                  <DataTableCell>{daysBetween(l.start_date, l.end_date)}</DataTableCell>
+                  <DataTableCell className="text-muted-foreground">{l.reviewed_by || "—"}</DataTableCell>
+                  <DataTableCell>
                     <StatusPill status={l.status.toLowerCase()} />
-                  </td>
-                </tr>
+                  </DataTableCell>
+                </DataTableRow>
               ))}
-            </tbody>
-          </table>
+            </DataTableBody>
+          </DataTable>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

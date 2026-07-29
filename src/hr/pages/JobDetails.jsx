@@ -1,6 +1,24 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { jobs, candidates } from "../data/recruitmentData";
+import { StatusPill } from "@/components/common/StatusPill";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableHead,
+  DataTableBody,
+  DataTableRow,
+  DataTableHeadCell,
+  DataTableCell,
+} from "@/components/ui/data-table";
+
+const stageTone = {
+  Interviewing: "info",
+  Screening: "warning",
+  Offer: "success",
+  Applied: "muted",
+};
 
 function JobDetails() {
   const { id } = useParams();
@@ -21,9 +39,7 @@ function JobDetails() {
 
       <div className="flex items-center gap-3 mb-6">
         <h1 className="text-2xl font-bold">{job.title}</h1>
-        <span className="text-xs font-medium px-3 py-1 rounded-full bg-blue-500/15 text-blue-400">
-          {job.status}
-        </span>
+        <StatusPill status={job.status.toLowerCase()} tone={stageTone[job.status]} />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -46,41 +62,36 @@ function JobDetails() {
       </div>
 
       <h2 className="text-lg font-semibold mb-4">Candidate Pipeline</h2>
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-muted/50 text-left">
-              <th className="p-3 font-medium">Name</th>
-              <th className="p-3 font-medium">Experience</th>
-              <th className="p-3 font-medium">Email</th>
-              <th className="p-3 font-medium">Status</th>
-              <th className="p-3 font-medium">Resume</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Card className="overflow-hidden p-0">
+        <DataTable className="border-0">
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableHeadCell>Name</DataTableHeadCell>
+              <DataTableHeadCell>Experience</DataTableHeadCell>
+              <DataTableHeadCell>Email</DataTableHeadCell>
+              <DataTableHeadCell>Status</DataTableHeadCell>
+              <DataTableHeadCell>Resume</DataTableHeadCell>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
             {jobCandidates.map((c) => (
-              <tr key={c.id} className="border-t border-border">
-                <td className="p-3">{c.name}</td>
-                <td className="p-3">{c.experience}</td>
-                <td className="p-3 text-muted-foreground">{c.email}</td>
-                <td className="p-3">
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-blue-500/15 text-blue-400">
-                    {c.stage}
-                  </span>
-                </td>
-                <td className="p-3">
-                  <button
-                    onClick={() => navigate(`/hr/candidate/${c.id}`)}
-                    className="rounded-lg bg-primary text-primary-foreground px-3 py-1.5 text-xs font-medium hover:opacity-90"
-                  >
+              <DataTableRow key={c.id}>
+                <DataTableCell>{c.name}</DataTableCell>
+                <DataTableCell>{c.experience}</DataTableCell>
+                <DataTableCell className="text-muted-foreground">{c.email}</DataTableCell>
+                <DataTableCell>
+                  <StatusPill status={c.stage.toLowerCase()} tone={stageTone[c.stage]} />
+                </DataTableCell>
+                <DataTableCell>
+                  <Button size="sm" onClick={() => navigate(`/hr/candidate/${c.id}`)}>
                     View Resume
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </DataTableCell>
+              </DataTableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </DataTableBody>
+        </DataTable>
+      </Card>
     </div>
   );
 }
