@@ -4,7 +4,7 @@ import AdminTopBar from "./AdminTopBar";
 
 function AdminShell() {
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
       <AdminSidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <AdminTopBar />

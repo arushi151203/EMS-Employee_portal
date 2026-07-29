@@ -5,6 +5,7 @@ import TaskList from "../components/TaskList";
 import KanbanBoard from "../components/KanbanBoard";
 import NewTaskModal from "../components/NewTaskModal";
 import tasksData from "../data/tasks";
+import { Button } from "@/components/ui/button";
 
 function Tasks() {
   const [tasks, setTasks] = useState(tasksData);
@@ -55,15 +56,15 @@ function Tasks() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-white px-10 pt-10 pb-10">
+    <div>
 
       {/* Header */}
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
 
         <div>
-          <h1 className="text-[28px] leading-tight font-bold">Tasks</h1>
+          <h1 className="text-2xl font-bold leading-tight">Tasks</h1>
 
-          <p className="mt-1.5 text-sm text-gray-400">
+          <p className="mt-1.5 text-sm text-muted-foreground">
             Manage employee assignments and project progress.
           </p>
         </div>
@@ -71,14 +72,14 @@ function Tasks() {
         <div className="flex items-center gap-3">
 
           {/* View Toggle */}
-          <div className="flex rounded-lg bg-[#1A2333] p-1">
+          <div className="flex rounded-lg bg-muted p-1">
 
             <button
               onClick={() => setView("list")}
               className={`rounded-md p-2 ${
                 view === "list"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <List size={18} />
@@ -88,8 +89,8 @@ function Tasks() {
               onClick={() => setView("kanban")}
               className={`rounded-md p-2 ${
                 view === "kanban"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <KanbanSquare size={18} />
@@ -98,13 +99,10 @@ function Tasks() {
           </div>
 
           {/* New Task */}
-          <button
-            onClick={() => setOpenModal(true)}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold hover:bg-blue-700"
-          >
+          <Button onClick={() => setOpenModal(true)}>
             <Plus size={16} />
             New Task
-          </button>
+          </Button>
 
         </div>
 
@@ -124,8 +122,8 @@ function Tasks() {
             onClick={() => setFilter(item.value)}
             className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${
               filter === item.value
-                ? "bg-blue-600 text-white"
-                : "bg-[#1A2333] text-gray-400 hover:bg-slate-700 hover:text-white"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
             }`}
           >
             {item.label}

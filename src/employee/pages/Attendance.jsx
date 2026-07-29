@@ -1,4 +1,3 @@
-import "../styles/Attendance.css";
 import AttendanceStatus from "../components/Attendance/AttendanceStatus";
 import AttendanceCalendar from "../components/Attendance/AttendanceCalendar";
 import AttendanceHistory from "../components/Attendance/AttendanceHistory";
@@ -6,36 +5,21 @@ import AttendanceHistory from "../components/Attendance/AttendanceHistory";
 function Attendance() {
   return (
     <div>
-      <main className="page-content">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Attendance</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Track your attendance and working hours
+        </p>
+      </div>
 
-        <div className="page-header">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AttendanceStatus />
+        <AttendanceCalendar />
+      </div>
 
-          <h1 className="page-title">
-            Attendance
-          </h1>
-
-          <p className="page-subtitle">
-            Track your attendance and working hours
-          </p>
-
-        </div>
-
-        <div className="dashboard-grid">
-
-          <AttendanceStatus />
-
-          <AttendanceCalendar />
-
-        </div>
-
-        <div className="table-section">
-
-          <AttendanceHistory />
-
-        </div>
-
-      </main>
-
+      <div className="mt-6">
+        <AttendanceHistory />
+      </div>
     </div>
   );
 }

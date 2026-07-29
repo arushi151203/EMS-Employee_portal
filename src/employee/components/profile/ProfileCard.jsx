@@ -1,7 +1,10 @@
 import { useState, useRef } from "react";
-import "../../css/profile/ProfileCard.css";
 import { FiCamera } from "react-icons/fi";
 import { getUser } from "@/lib/auth";
+
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 function ProfileCard() {
   const currentUser = getUser();
@@ -16,34 +19,40 @@ function ProfileCard() {
       setProfileImage(imageUrl);
     }
   };
+
+  const initials = currentUser?.name
+    ? currentUser.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "?";
+
   return (
-    <div className="profile-card">
-      <div className="profile-image-wrapper">
-        <img
-          src={profileImage}
-          alt="Profile"
-          className="profile-image"
-        />
+    <Card className="flex flex-col items-center p-6 text-center">
+      <div className="relative">
+        <Avatar className="size-24">
+          <AvatarImage src={profileImage} alt="Profile" />
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
         <button
-          className="camera-button"
           onClick={() => fileInputRef.current.click()}
+          className="absolute bottom-0 right-0 grid size-8 place-items-center rounded-full bg-primary text-primary-foreground shadow-elegant hover:bg-primary/90"
         >
-          <FiCamera />
+          <FiCamera className="size-4" />
         </button>
       </div>
-      <h2>{currentUser?.name || "Guest"}</h2>
-      <p className="designation">
-        {currentUser?.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : ""}
+
+      <h2 className="mt-4 text-base font-semibold">{currentUser?.name || "Guest"}</h2>
+      <p className="text-xs text-muted-foreground">
+        {currentUser?.role
+          ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
+          : ""}
       </p>
-      <p className="employee-id">
+      <p className="mt-1 text-xs text-muted-foreground">
         Employee ID: {currentUser?.employee_id || "—"}
       </p>
-      <button
-        className="change-photo-btn"
-        onClick={() => fileInputRef.current.click()}
-      >
+
+      <Button variant="outline" size="sm" className="mt-4" onClick={() => fileInputRef.current.click()}>
         Change Photo
-      </button>
+      </Button>
+
       <input
         type="file"
         ref={fileInputRef}
@@ -51,7 +60,8 @@ function ProfileCard() {
         style={{ display: "none" }}
         onChange={handleImageChange}
       />
-    </div>
+    </Card>
   );
 }
+
 export default ProfileCard;

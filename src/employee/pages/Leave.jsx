@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -15,6 +15,13 @@ import { StatusPill } from "@/components/common/StatusPill";
 import { getUser } from "@/lib/auth";
 import { applyLeave, getMyLeaves } from "../services/leaveService";
 import { LEAVE_POLICY, leaveTypes, daysBetween } from "../lib/leavePolicy";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 function typeBadgeClasses(type) {
   const color = LEAVE_POLICY[type]?.color || "#94A3B8";
@@ -126,12 +133,9 @@ export default function Leave() {
           <h1 className="text-2xl font-bold">Leave Management</h1>
           <p className="text-sm text-muted-foreground mt-1">Apply for leave and track your balance</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90"
-        >
+        <Button onClick={() => setShowModal(true)}>
           <Plus size={16} /> Apply for Leave
-        </button>
+        </Button>
       </div>
 
       {/* Balance cards */}
@@ -229,76 +233,63 @@ export default function Leave() {
       </div>
 
       {/* Apply for Leave modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">Apply for Leave</h2>
-              <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-foreground">
-                <X size={18} />
-              </button>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Apply for Leave</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Field>
+              <FieldLabel>Leave Type</FieldLabel>
+              <Select value={leaveType} onValueChange={setLeaveType}>
+                <SelectTrigger />
+                <SelectContent>
+                  {leaveTypes.map((t) => (
+                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field>
+                <FieldLabel>Start Date</FieldLabel>
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel>End Date</FieldLabel>
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </Field>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Leave Type</label>
-                <select
-                  value={leaveType}
-                  onChange={(e) => setLeaveType(e.target.value)}
-                  className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                >
-                  {leaveTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
+            {startDate && endDate && new Date(endDate) >= new Date(startDate) && (
+              <p className="text-xs text-muted-foreground">{daysBetween(startDate, endDate)} day(s)</p>
+            )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">Start Date</label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">End Date</label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                  />
-                </div>
-              </div>
+            <Field>
+              <FieldLabel>Reason (optional)</FieldLabel>
+              <Textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={3}
+              />
+            </Field>
 
-              {startDate && endDate && new Date(endDate) >= new Date(startDate) && (
-                <p className="text-xs text-muted-foreground">{daysBetween(startDate, endDate)} day(s)</p>
-              )}
-
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Reason (optional)</label>
-                <textarea
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  rows={3}
-                  className="mt-1 w-full rounded-lg bg-input border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full rounded-lg bg-primary text-primary-foreground py-2.5 text-sm font-medium hover:opacity-90 disabled:opacity-60"
-              >
-                {isSubmitting ? "Submitting..." : "Submit Request"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Submitting..." : "Submit Request"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

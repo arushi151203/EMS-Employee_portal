@@ -52,7 +52,7 @@ function ChatWindow({
 
         </div>
 
-        <div className="header-icons">
+        <div className="header-icons relative">
 
           <button
             onClick={() => setShowMenu(!showMenu)}
@@ -60,19 +60,19 @@ function ChatWindow({
             <FiMoreVertical />
           </button>
 
+          {/* Three Dot Menu */}
+
+          <ChatMenu
+            showMenu={showMenu}
+            onClearChat={() => {
+              setShowMenu(false);
+              setShowClearModal(true);
+            }}
+          />
+
         </div>
 
       </div>
-
-      {/* Three Dot Menu */}
-
-      <ChatMenu
-        showMenu={showMenu}
-        onClearChat={() => {
-          setShowMenu(false);
-          setShowClearModal(true);
-        }}
-      />
 
       {/* Clear Chat Modal */}
 

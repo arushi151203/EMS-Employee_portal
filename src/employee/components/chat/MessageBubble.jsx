@@ -1,11 +1,17 @@
 import { FiCheck, FiFileText } from "react-icons/fi";
-import "./MessageBubble.css";
 
 function MessageBubble({ message }) {
-  return (
-    <div className={`message-row ${message.type}`}>
-      <div className={`chat-bubble ${message.type}`}>
+  const isSent = message.type === "sent";
 
+  return (
+    <div className={`flex w-full px-4 ${isSent ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`max-w-[70%] rounded-2xl px-3.5 py-2 text-sm ${
+          isSent
+            ? "rounded-br-sm bg-primary text-primary-foreground"
+            : "rounded-bl-sm bg-muted text-foreground"
+        }`}
+      >
         {/* Text Message */}
         {message.messageType === "text" || !message.messageType ? (
           <p>{message.text}</p>
@@ -14,43 +20,36 @@ function MessageBubble({ message }) {
             href={message.fileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="file-message"
+            className="flex items-center gap-2 underline underline-offset-2"
           >
             <FiFileText />
             <span>{message.fileName}</span>
           </a>
         )}
 
-        <div className="bubble-footer">
-
+        <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
           <span>{message.time}</span>
 
           {message.type === "sent" && (
-            <div className="message-status">
-
-              {message.status === "sent" && (
-                <FiCheck />
-              )}
+            <div className="flex items-center">
+              {message.status === "sent" && <FiCheck className="size-3" />}
 
               {message.status === "delivered" && (
-                <>
-                  <FiCheck />
-                  <FiCheck />
-                </>
+                <span className="flex">
+                  <FiCheck className="size-3" />
+                  <FiCheck className="-ml-1.5 size-3" />
+                </span>
               )}
 
               {message.status === "read" && (
-                <div className="double-read">
-                  <FiCheck />
-                  <FiCheck />
-                </div>
+                <span className="flex text-info">
+                  <FiCheck className="size-3" />
+                  <FiCheck className="-ml-1.5 size-3" />
+                </span>
               )}
-
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );

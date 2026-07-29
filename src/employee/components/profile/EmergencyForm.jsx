@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import "../../css/profile/EmergencyForm.css";
+
+import { Card } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+
 function EmergencyForm() {
 
   const [formData, setFormData] = useState({
@@ -28,157 +34,79 @@ function EmergencyForm() {
 
   };
 
-const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     toast.success("Emergency Contact Saved Successfully!");
     console.log(formData);
-};
+  };
 
   return (
-
-    <div className="emergency-form">
-
-      <div className="emergency-header">
-
-        <h2>Emergency Contact</h2>
-
-        <p>
-          Manage emergency contact information
-        </p>
-
+    <Card className="p-6">
+      <div className="mb-5">
+        <h2 className="text-base font-semibold">Emergency Contact</h2>
+        <p className="text-sm text-muted-foreground">Manage emergency contact information</p>
       </div>
 
       <form onSubmit={handleSubmit}>
+        <h3 className="mb-3 text-sm font-semibold text-foreground">Primary Contact</h3>
 
-        <h3>Primary Contact</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel>Name</FieldLabel>
+            <Input type="text" name="primaryName" value={formData.primaryName} onChange={handleChange} />
+          </Field>
 
-        <div className="form-grid">
+          <Field>
+            <FieldLabel>Relationship</FieldLabel>
+            <Input type="text" name="primaryRelation" value={formData.primaryRelation} onChange={handleChange} />
+          </Field>
 
-          <div className="form-group">
-            <label>Name</label>
+          <Field>
+            <FieldLabel>Phone Number</FieldLabel>
+            <Input type="text" name="primaryPhone" value={formData.primaryPhone} onChange={handleChange} />
+          </Field>
 
-            <input
-              type="text"
-              name="primaryName"
-              value={formData.primaryName}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Relationship</label>
-
-            <input
-              type="text"
-              name="primaryRelation"
-              value={formData.primaryRelation}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Phone Number</label>
-
-            <input
-              type="text"
-              name="primaryPhone"
-              value={formData.primaryPhone}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email</label>
-
-            <input
-              type="email"
-              name="primaryEmail"
-              value={formData.primaryEmail}
-              onChange={handleChange}
-            />
-          </div>
-
+          <Field>
+            <FieldLabel>Email</FieldLabel>
+            <Input type="email" name="primaryEmail" value={formData.primaryEmail} onChange={handleChange} />
+          </Field>
         </div>
 
-        <h3 className="section-title">
-          Secondary Contact
-        </h3>
+        <h3 className="mb-3 mt-6 text-sm font-semibold text-foreground">Secondary Contact</h3>
 
-        <div className="form-grid">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel>Name</FieldLabel>
+            <Input type="text" name="secondaryName" value={formData.secondaryName} onChange={handleChange} />
+          </Field>
 
-          <div className="form-group">
-            <label>Name</label>
+          <Field>
+            <FieldLabel>Relationship</FieldLabel>
+            <Input type="text" name="secondaryRelation" value={formData.secondaryRelation} onChange={handleChange} />
+          </Field>
 
-            <input
-              type="text"
-              name="secondaryName"
-              value={formData.secondaryName}
-              onChange={handleChange}
-            />
-          </div>
+          <Field>
+            <FieldLabel>Phone Number</FieldLabel>
+            <Input type="text" name="secondaryPhone" value={formData.secondaryPhone} onChange={handleChange} />
+          </Field>
 
-          <div className="form-group">
-            <label>Relationship</label>
-
-            <input
-              type="text"
-              name="secondaryRelation"
-              value={formData.secondaryRelation}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Phone Number</label>
-
-            <input
-              type="text"
-              name="secondaryPhone"
-              value={formData.secondaryPhone}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email</label>
-
-            <input
-              type="email"
-              name="secondaryEmail"
-              value={formData.secondaryEmail}
-              onChange={handleChange}
-            />
-          </div>
-
+          <Field>
+            <FieldLabel>Email</FieldLabel>
+            <Input type="email" name="secondaryEmail" value={formData.secondaryEmail} onChange={handleChange} />
+          </Field>
         </div>
 
-        <div className="form-group full-width">
+        <Field className="mt-4">
+          <FieldLabel>Address</FieldLabel>
+          <Textarea name="address" rows="4" value={formData.address} onChange={handleChange} />
+        </Field>
 
-          <label>Address</label>
-
-          <textarea
-            name="address"
-            rows="4"
-            value={formData.address}
-            onChange={handleChange}
-          ></textarea>
-
+        <div className="mt-6 flex justify-end">
+          <Button type="submit">Save Changes</Button>
         </div>
-
-        <div className="save-btn-container">
-
-          <button type="submit">
-            Save Changes
-          </button>
-
-        </div>
-
       </form>
-
-    </div>
-
+    </Card>
   );
-
 }
 
 export default EmergencyForm;

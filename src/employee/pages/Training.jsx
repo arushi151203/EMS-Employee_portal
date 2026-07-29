@@ -1,4 +1,4 @@
-import StatsCard from "../components/training/StatsCard";
+import { StatCard } from "@/components/common/StatCard";
 import CourseCard from "../components/training/CourseCard";
 import "../css/training-dashboard.css";
 import {
@@ -16,10 +16,10 @@ export default function Training() {
         <p>Courses, certifications, and learning paths</p>
       </div>
       <div className="stats-container">
-        <StatsCard title="COURSES ENROLLED" value="4" icon={<BsBook size={20} />} iconColor="icon-blue" />
-        <StatsCard title="COMPLETED" value="1" icon={<BsCheckCircle size={20} />} iconColor="icon-green" />
-        <StatsCard title="HOURS LEARNED" value="18.5h" icon={<BsClock size={20} />} iconColor="icon-purple" />
-        <StatsCard title="CERTIFICATES" value="2" icon={<BsAward size={20} />} iconColor="icon-orange" />
+        <StatCard label="COURSES ENROLLED" value="4" icon={<BsBook size={18} />} tone="info" />
+        <StatCard label="COMPLETED" value="1" icon={<BsCheckCircle size={18} />} tone="success" />
+        <StatCard label="HOURS LEARNED" value="18.5h" icon={<BsClock size={18} />} tone="violet" />
+        <StatCard label="CERTIFICATES" value="2" icon={<BsAward size={18} />} tone="warning" />
       </div>
       <h2 className="section-title">Current Courses</h2>
       <div className="course-container">

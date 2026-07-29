@@ -1,5 +1,10 @@
-import { X } from "lucide-react";
 import { useState } from "react";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 function NewTaskModal({ open, onClose, onAddTask }) {
   const [task, setTask] = useState({
@@ -8,14 +13,13 @@ function NewTaskModal({ open, onClose, onAddTask }) {
     status: "todo",
     dueDate: "",
   });
-
-  if (!open) return null;
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!task.title || !task.dueDate) {
-      alert("Please fill all required fields.");
+      setError("Please fill all required fields.");
       return;
     }
 
@@ -31,84 +35,79 @@ function NewTaskModal({ open, onClose, onAddTask }) {
       status: "todo",
       dueDate: "",
     });
+    setError("");
 
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-
-      <div className="w-[450px] rounded-xl bg-slate-900 p-6">
-
-        <div className="mb-6 flex items-center justify-between">
-
-          <h2 className="text-2xl font-bold">
-            New Task
-          </h2>
-
-          <button onClick={onClose}>
-            <X />
-          </button>
-
-        </div>
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent className="max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl">New Task</DialogTitle>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <Field>
+            <FieldLabel htmlFor="task-title">Task Title</FieldLabel>
+            <Input
+              id="task-title"
+              type="text"
+              placeholder="e.g. Prepare Q3 report"
+              value={task.title}
+              onChange={(e) => setTask({ ...task, title: e.target.value })}
+            />
+          </Field>
 
-          <input
-            type="text"
-            placeholder="Task Title"
-            className="w-full rounded-lg bg-slate-800 p-3 outline-none"
-            value={task.title}
-            onChange={(e) =>
-              setTask({ ...task, title: e.target.value })
-            }
-          />
+          <Field>
+            <FieldLabel>Priority</FieldLabel>
+            <Select
+              value={task.priority}
+              onValueChange={(value) => setTask({ ...task, priority: value })}
+            >
+              <SelectTrigger />
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <select
-            className="w-full rounded-lg bg-slate-800 p-3"
-            value={task.priority}
-            onChange={(e) =>
-              setTask({ ...task, priority: e.target.value })
-            }
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
-          </select>
+          <Field>
+            <FieldLabel>Status</FieldLabel>
+            <Select
+              value={task.status}
+              onValueChange={(value) => setTask({ ...task, status: value })}
+            >
+              <SelectTrigger />
+              <SelectContent>
+                <SelectItem value="todo">Todo</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <select
-            className="w-full rounded-lg bg-slate-800 p-3"
-            value={task.status}
-            onChange={(e) =>
-              setTask({ ...task, status: e.target.value })
-            }
-          >
-            <option value="todo">Todo</option>
-            <option value="in-progress">In Progress</option>
-            <option value="done">Done</option>
-          </select>
+          <Field>
+            <FieldLabel htmlFor="task-due-date">Due Date</FieldLabel>
+            <Input
+              id="task-due-date"
+              type="date"
+              value={task.dueDate}
+              onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+            />
+          </Field>
 
-          <input
-            type="date"
-            className="w-full rounded-lg bg-slate-800 p-3"
-            value={task.dueDate}
-            onChange={(e) =>
-              setTask({ ...task, dueDate: e.target.value })
-            }
-          />
+          <FieldError>{error}</FieldError>
 
-          <button
-            className="w-full rounded-lg bg-blue-600 py-3 font-semibold hover:bg-blue-700"
-          >
+          <Button type="submit" className="w-full" size="lg">
             Add Task
-          </button>
-
+          </Button>
         </form>
-
-      </div>
-
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

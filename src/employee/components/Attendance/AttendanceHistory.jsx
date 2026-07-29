@@ -1,7 +1,16 @@
-import "./AttendanceHistory.css";
 import { useState, useEffect } from "react";
 import { getHistory } from "./services/attendanceService";
 
+import { Card } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableHead,
+  DataTableBody,
+  DataTableRow,
+  DataTableHeadCell,
+  DataTableCell,
+} from "@/components/ui/data-table";
+import { StatusPill } from "@/components/common/StatusPill";
 
 function AttendanceHistory() {
 
@@ -32,88 +41,41 @@ function AttendanceHistory() {
   }, []);
 
   return (
-
-    <div className="card attendance-history">
-
-      <div className="history-header">
-        <h2>Attendance History</h2>
+    <Card className="overflow-hidden p-0">
+      <div className="p-5">
+        <h2 className="text-base font-semibold">Attendance History</h2>
       </div>
 
-      <table>
+      <DataTable className="rounded-none border-0 border-t">
+        <DataTableHead>
+          <DataTableRow>
+            <DataTableHeadCell>Date</DataTableHeadCell>
+            <DataTableHeadCell>Day</DataTableHeadCell>
+            <DataTableHeadCell>Check In</DataTableHeadCell>
+            <DataTableHeadCell>Check Out</DataTableHeadCell>
+            <DataTableHeadCell>Break</DataTableHeadCell>
+            <DataTableHeadCell>Hours</DataTableHeadCell>
+            <DataTableHeadCell>Status</DataTableHeadCell>
+          </DataTableRow>
+        </DataTableHead>
 
-        <thead>
-
-          <tr>
-
-            <th>Date</th>
-
-            <th>Day</th>
-
-            <th>Check In</th>
-
-            <th>Check Out</th>
-
-            <th>Break</th>
-
-            <th>Hours</th>
-
-            <th>Status</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {filteredData.map((item,index)=>(
-
-            <tr key={index}>
-
-              <td>   
-                 {new Date(item.attendance_date).toLocaleDateString()}
-              </td>
-
-              <td>
-                {item.day}
-              </td>
-
-              <td>
-                {item.check_in || "--"}
-              </td>
-
-              <td>
-                {item.check_out || "--"}
-              </td>
-
-              <td>
-                {item.break_time || "00:00:00"}
-              </td>
-
-              <td>
-                {item.working_hours || "00:00:00"}
-              </td>
-              
-              <td>
-                <span
-                  className={`status-badge ${item.status.toLowerCase()}`}
-                >
-
-                  {item.status}
-
-                </span>
-
-              </td>
-
-            </tr>
-
+        <DataTableBody>
+          {filteredData.map((item, index) => (
+            <DataTableRow key={index}>
+              <DataTableCell>{new Date(item.attendance_date).toLocaleDateString()}</DataTableCell>
+              <DataTableCell>{item.day}</DataTableCell>
+              <DataTableCell>{item.check_in || "--"}</DataTableCell>
+              <DataTableCell>{item.check_out || "--"}</DataTableCell>
+              <DataTableCell>{item.break_time || "00:00:00"}</DataTableCell>
+              <DataTableCell>{item.working_hours || "00:00:00"}</DataTableCell>
+              <DataTableCell>
+                <StatusPill status={item.status.toLowerCase()} />
+              </DataTableCell>
+            </DataTableRow>
           ))}
-
-        </tbody>
-
-      </table>
-
-    </div>
-
+        </DataTableBody>
+      </DataTable>
+    </Card>
   );
 
 }

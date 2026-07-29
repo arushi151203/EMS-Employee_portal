@@ -106,5 +106,25 @@ CREATE TABLE IF NOT EXISTS employee_documents (
 
 ALTER TABLE password_resets ADD COLUMN purpose VARCHAR(20) NOT NULL DEFAULT 'reset';
 
+
+CREATE TABLE IF NOT EXISTS employee_skills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id VARCHAR(50) NOT NULL,
+    skill_name VARCHAR(100) NOT NULL,
+    level INT NOT NULL DEFAULT 50,
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);
+
+CREATE TABLE IF NOT EXISTS employee_emergency_contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id VARCHAR(50) NOT NULL,
+    contact_type ENUM('Primary','Secondary') NOT NULL,
+    contact_name VARCHAR(100),
+    relationship VARCHAR(50),
+    phone VARCHAR(20),
+    email VARCHAR(150),
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+    UNIQUE KEY unique_contact_type (employee_id, contact_type)
+);
 -- Optional: quick test row so you can confirm the API works immediately
 -- INSERT INTO attendance (employee_id, attendance_date, status) VALUES ('EMP001', CURDATE(), 'Present');

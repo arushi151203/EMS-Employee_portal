@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import "../../css/profile/PersonalForm.css";
 import { toast } from "sonner";
 import { getUser } from "@/lib/auth";
 import { getProfile, updatePersonal } from "@/employee/services/profileService";
+
+import { Card } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 function PersonalForm() {
   const currentUser = getUser();
@@ -63,80 +68,89 @@ function PersonalForm() {
   };
 
   if (loading) {
-    return <div className="personal-form"><p>Loading...</p></div>;
+    return (
+      <Card className="p-6">
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </Card>
+    );
   }
 
   return (
-    <div className="personal-form">
-      <div className="form-header">
-        <h2>Personal Information</h2>
-        <p>Update your personal details and contact information</p>
+    <Card className="p-6">
+      <div className="mb-5">
+        <h2 className="text-base font-semibold">Personal Information</h2>
+        <p className="text-sm text-muted-foreground">
+          Update your personal details and contact information
+        </p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-grid">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input type="text" value={form.name} onChange={handleChange("name")} />
-          </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel>Full Name</FieldLabel>
+            <Input type="text" value={form.name} onChange={handleChange("name")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Email Address</label>
-            <input type="email" value={form.email} onChange={handleChange("email")} />
-          </div>
+          <Field>
+            <FieldLabel>Email Address</FieldLabel>
+            <Input type="email" value={form.email} onChange={handleChange("email")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input type="text" value={form.phone} onChange={handleChange("phone")} />
-          </div>
+          <Field>
+            <FieldLabel>Phone Number</FieldLabel>
+            <Input type="text" value={form.phone} onChange={handleChange("phone")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Date of Birth</label>
-            <input type="date" value={form.dob} onChange={handleChange("dob")} />
-          </div>
+          <Field>
+            <FieldLabel>Date of Birth</FieldLabel>
+            <Input type="date" value={form.dob} onChange={handleChange("dob")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Gender</label>
-            <select value={form.gender} onChange={handleChange("gender")}>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </div>
+          <Field>
+            <FieldLabel>Gender</FieldLabel>
+            <Select value={form.gender} onValueChange={(v) => setForm((prev) => ({ ...prev, gender: v }))}>
+              <SelectTrigger />
+              <SelectContent>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <div className="form-group full-width">
-            <label>Address</label>
-            <input type="text" value={form.address} onChange={handleChange("address")} />
-          </div>
+          <Field className="sm:col-span-2">
+            <FieldLabel>Address</FieldLabel>
+            <Input type="text" value={form.address} onChange={handleChange("address")} />
+          </Field>
 
-          <div className="form-group">
-            <label>City</label>
-            <input type="text" value={form.city} onChange={handleChange("city")} />
-          </div>
+          <Field>
+            <FieldLabel>City</FieldLabel>
+            <Input type="text" value={form.city} onChange={handleChange("city")} />
+          </Field>
 
-          <div className="form-group">
-            <label>State</label>
-            <input type="text" value={form.state} onChange={handleChange("state")} />
-          </div>
+          <Field>
+            <FieldLabel>State</FieldLabel>
+            <Input type="text" value={form.state} onChange={handleChange("state")} />
+          </Field>
 
-          <div className="form-group">
-            <label>ZIP Code</label>
-            <input type="text" value={form.zip_code} onChange={handleChange("zip_code")} />
-          </div>
+          <Field>
+            <FieldLabel>ZIP Code</FieldLabel>
+            <Input type="text" value={form.zip_code} onChange={handleChange("zip_code")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Country</label>
-            <input type="text" value={form.country} onChange={handleChange("country")} />
-          </div>
+          <Field>
+            <FieldLabel>Country</FieldLabel>
+            <Input type="text" value={form.country} onChange={handleChange("country")} />
+          </Field>
         </div>
 
-        <div className="button-container">
-          <button type="submit" disabled={saving}>
+        <div className="mt-6 flex justify-end">
+          <Button type="submit" disabled={saving}>
             {saving ? "Saving..." : "Save Changes"}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 }
 

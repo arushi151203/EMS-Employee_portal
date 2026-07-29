@@ -1,12 +1,10 @@
-import "./ContactList.css";
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-function ContactList({
-  contacts,
-  selectedContact,
-  setSelectedContact,
-}) {
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+
+function ContactList({ contacts, selectedContact, setSelectedContact }) {
   const [search, setSearch] = useState("");
 
   const filteredContacts = contacts.filter((contact) => {
@@ -19,99 +17,67 @@ function ContactList({
   });
 
   return (
-    <div className="contact-list">
-
+    <div className="flex h-full w-full flex-col border-r border-border bg-card">
       {/* Header */}
-
-      <div className="contact-header">
-
-        <h2>Messages</h2>
-
+      <div className="border-b border-border px-5 py-4">
+        <h2 className="text-base font-semibold">Messages</h2>
       </div>
 
       {/* Search */}
-
-      <div className="search-container">
-
-        <FiSearch className="search-icon" />
-
+      <div className="relative px-4 py-3">
+        <FiSearch className="pointer-events-none absolute left-7 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           placeholder="Search conversations..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-lg border border-input bg-input/30 py-2 pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         />
-
       </div>
 
       {/* Contact List */}
-
-      <div className="contact-items">
-
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
         {filteredContacts.length === 0 ? (
-
-          <div className="empty-search">
+          <div className="p-6 text-center text-sm text-muted-foreground">
             No conversations found.
           </div>
-
         ) : (
-
           filteredContacts.map((contact) => (
-
             <div
               key={contact.id}
-              className={`contact-card ${
-                selectedContact.id === contact.id ? "active" : ""
-              }`}
               onClick={() => setSelectedContact(contact)}
+              className={`flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors ${
+                selectedContact.id === contact.id
+                  ? "bg-accent"
+                  : "hover:bg-accent/50"
+              }`}
             >
-
-              <div className="avatar-container">
-
-                <div className="contact-avatar">
-                  {contact.avatar}
-                </div>
-
+              <div className="relative shrink-0">
+                <Avatar>
+                  <AvatarFallback>{contact.avatar}</AvatarFallback>
+                </Avatar>
                 <span
-                  className={`status-dot ${
-                    contact.online ? "online" : "offline"
+                  className={`absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-card ${
+                    contact.online ? "bg-success" : "bg-muted-foreground"
                   }`}
-                ></span>
-
+                />
               </div>
 
-              <div className="contact-content">
-
-                <div className="contact-top">
-
-                  <h4>{contact.name}</h4>
-
-                  <span>{contact.time}</span>
-
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="truncate text-sm font-medium">{contact.name}</h4>
+                  <span className="shrink-0 text-xs text-muted-foreground">{contact.time}</span>
                 </div>
 
-                <div className="contact-bottom">
-
-                  <p>{contact.lastMessage}</p>
-
-                  {contact.unread > 0 && (
-                    <div className="unread-badge">
-                      {contact.unread}
-                    </div>
-                  )}
-
+                <div className="mt-0.5 flex items-center justify-between gap-2">
+                  <p className="truncate text-xs text-muted-foreground">{contact.lastMessage}</p>
+                  {contact.unread > 0 && <Badge>{contact.unread}</Badge>}
                 </div>
-
               </div>
-
             </div>
-
           ))
-
         )}
-
       </div>
-
     </div>
   );
 }

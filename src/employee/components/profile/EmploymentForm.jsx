@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import "../../css/profile/EmploymentForm.css";
 import { toast } from "sonner";
 import { getUser } from "@/lib/auth";
 import { getProfile, updateEmployment } from "@/employee/services/profileService";
+
+import { Card } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 function EmploymentForm() {
   const currentUser = getUser();
@@ -57,75 +62,88 @@ function EmploymentForm() {
   };
 
   if (loading) {
-    return <div className="employment-form"><p>Loading...</p></div>;
+    return (
+      <Card className="p-6">
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </Card>
+    );
   }
 
   return (
-    <div className="employment-form">
-      <div className="employment-header">
-        <h2>Employment Information</h2>
-        <p>Manage your employment details</p>
+    <Card className="p-6">
+      <div className="mb-5">
+        <h2 className="text-base font-semibold">Employment Information</h2>
+        <p className="text-sm text-muted-foreground">Manage your employment details</p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="employment-grid">
-          <div className="form-group">
-            <label>Employee ID</label>
-            <input type="text" value={currentUser?.employee_id || ""} readOnly />
-          </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel>Employee ID</FieldLabel>
+            <Input type="text" value={currentUser?.employee_id || ""} readOnly className="bg-muted/40 text-muted-foreground" />
+          </Field>
 
-          <div className="form-group">
-            <label>Department</label>
-            <input type="text" value={form.department} onChange={handleChange("department")} />
-          </div>
+          <Field>
+            <FieldLabel>Department</FieldLabel>
+            <Input type="text" value={form.department} onChange={handleChange("department")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Designation</label>
-            <input type="text" value={form.designation} onChange={handleChange("designation")} />
-          </div>
+          <Field>
+            <FieldLabel>Designation</FieldLabel>
+            <Input type="text" value={form.designation} onChange={handleChange("designation")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Employment Type</label>
-            <select value={form.employment_type} onChange={handleChange("employment_type")}>
-              <option>Full Time</option>
-              <option>Part Time</option>
-              <option>Intern</option>
-              <option>Contract</option>
-            </select>
-          </div>
+          <Field>
+            <FieldLabel>Employment Type</FieldLabel>
+            <Select
+              value={form.employment_type}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, employment_type: v }))}
+            >
+              <SelectTrigger />
+              <SelectContent>
+                <SelectItem value="Full Time">Full Time</SelectItem>
+                <SelectItem value="Part Time">Part Time</SelectItem>
+                <SelectItem value="Intern">Intern</SelectItem>
+                <SelectItem value="Contract">Contract</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <div className="form-group">
-            <label>Manager</label>
-            <input type="text" value={form.manager} onChange={handleChange("manager")} />
-          </div>
+          <Field>
+            <FieldLabel>Manager</FieldLabel>
+            <Input type="text" value={form.manager} onChange={handleChange("manager")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Joining Date</label>
-            <input type="date" value={form.date_of_joining} onChange={handleChange("date_of_joining")} />
-          </div>
+          <Field>
+            <FieldLabel>Joining Date</FieldLabel>
+            <Input type="date" value={form.date_of_joining} onChange={handleChange("date_of_joining")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Work Location</label>
-            <input type="text" value={form.work_location} onChange={handleChange("work_location")} />
-          </div>
+          <Field>
+            <FieldLabel>Work Location</FieldLabel>
+            <Input type="text" value={form.work_location} onChange={handleChange("work_location")} />
+          </Field>
 
-          <div className="form-group">
-            <label>Status</label>
-            <select value={form.status} onChange={handleChange("status")}>
-              <option>Active</option>
-              <option>On Leave</option>
-              <option>Resigned</option>
-            </select>
-          </div>
+          <Field>
+            <FieldLabel>Status</FieldLabel>
+            <Select value={form.status} onValueChange={(v) => setForm((prev) => ({ ...prev, status: v }))}>
+              <SelectTrigger />
+              <SelectContent>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="On Leave">On Leave</SelectItem>
+                <SelectItem value="Resigned">Resigned</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
         </div>
 
-        <div className="employment-button">
-          <button type="submit" disabled={saving}>
+        <div className="mt-6 flex justify-end">
+          <Button type="submit" disabled={saving}>
             {saving ? "Saving..." : "Save Changes"}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 }
 

@@ -121,3 +121,98 @@ exports.updateEmployment = (req, res) => {
     }
   );
 };
+
+// ---------------- SKILLS ----------------
+
+exports.getSkills = (req, res) => {
+  const { employeeId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only view your own skills" });
+  }
+  db.query("SELECT * FROM employee_skills WHERE employee_id=?", [employeeId], (err, rows) => {
+    if (err) return res.status(500).json(err);
+    res.json(rows);
+  });
+};
+
+exports.addSkill = (req, res) => {
+  const { employeeId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only edit your own skills" });
+  }
+  const { skill_name, level } = req.body;
+  if (!skill_name) return res.status(400).json({ message: "Skill name is required" });
+
+  db.query(
+    "INSERT INTO employee_skills (employee_id, skill_name, level) VALUES (?, ?, ?)",
+    [employeeId, skill_name, level || 50],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.status(201).json({ id: result.insertId, employee_id: employeeId, skill_name, level: level || 50 });
+    }
+  );
+};
+
+exports.updateSkill = (req, res) => {
+  const { employeeId, skillId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only edit your own skills" });
+  }
+  const { skill_name, level } = req.body;
+  db.query(
+    "UPDATE employee_skills SET skill_name=?, level=? WHERE id=? AND employee_id=?",
+    [skill_name, level, skillId, employeeId],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ message: "Skill updated" });
+    }
+  );
+};
+
+exports.deleteSkill = (req, res) => {
+  const { employeeId, skillId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only edit your own skills" });
+  }
+  db.query("DELETE FROM employee_skills WHERE id=? AND employee_id=?", [skillId, employeeId], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Skill deleted" });
+  });
+};
+
+// ---------------- EMERGENCY CONTACTS ----------------
+
+exports.getEmergencyContacts = (req, res) => {
+  const { employeeId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only view your own emergency contacts" });
+  }
+  db.query("SELECT * FROM employee_emergency_contacts WHERE employee_id=?", [employeeId], (err, rows) => {
+    if (err) return res.status(500).json(err);
+    res.json(rows);
+  });
+};
+
+exports.saveEmergencyContacts = (req, res) => {
+  const { employeeId } = req.params;
+  if (req.user.employee_id !== employeeId) {
+    return res.status(403).json({ message: "You can only edit your own emergency contacts" });
+  }
+  const { primary, secondary } = req.body;
+
+  const upsert = (contact, type) =>
+    new Promise((resolve, reject) => {
+      db.query(
+        `INSERT INTO employee_emergency_contacts (employee_id, contact_type, contact_name, relationship, phone, email)
+         VALUES (?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           contact_name=VALUES(contact_name), relationship=VALUES(relationship), phone=VALUES(phone), email=VALUES(email)`,
+        [employeeId, type, contact.name, contact.relationship, contact.phone, contact.email],
+        (err) => (err ? reject(err) : resolve())
+      );
+    });
+
+  Promise.all([upsert(primary, "Primary"), upsert(secondary, "Secondary")])
+    .then(() => res.json({ message: "Emergency contacts saved!" }))
+    .catch((err) => res.status(500).json(err));
+};

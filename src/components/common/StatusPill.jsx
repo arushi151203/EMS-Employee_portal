@@ -9,6 +9,7 @@ const toneClasses = {
 };
 function StatusPill({
   status,
+  tone: toneOverride,
   className
 }) {
   const map = {
@@ -37,7 +38,7 @@ function StatusPill({
     medium: "info",
     low: "muted"
   };
-  const tone = map[status.toLowerCase()] ?? "muted";
+  const tone = toneOverride ?? (map[status.toLowerCase()] ?? "muted");
   return <span
     className={cn(
       "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium capitalize",

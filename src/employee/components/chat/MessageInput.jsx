@@ -1,15 +1,7 @@
 import { useRef, useState } from "react";
-import "./MessageInput.css";
-
 import EmojiPicker from "emoji-picker-react";
 
-import {
-  FiSmile,
-  FiPaperclip,
-  FiMic,
-  FiSend,
-  FiX,
-} from "react-icons/fi";
+import { FiSmile, FiPaperclip, FiMic, FiSend, FiX } from "react-icons/fi";
 
 function MessageInput({ sendMessage }) {
   const [text, setText] = useState("");
@@ -65,91 +57,66 @@ function MessageInput({ sendMessage }) {
   return (
     <>
       {selectedFile && (
-        <div className="attachment-preview">
-
-          <span>
-            📎 {selectedFile.name}
-          </span>
-
-          <button onClick={() => setSelectedFile(null)}>
+        <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/50 px-4 py-2 text-xs text-muted-foreground">
+          <span>📎 {selectedFile.name}</span>
+          <button onClick={() => setSelectedFile(null)} className="hover:text-foreground">
             <FiX />
           </button>
-
         </div>
       )}
 
-      <div className="message-input-container">
-
+      <div className="flex items-center gap-1.5 border-t border-border bg-card px-4 py-3">
         {/* Emoji */}
-
-        <div className="emoji-container">
-
+        <div className="relative">
           <button
-            className="action-btn"
+            className="grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
             onClick={() => setShowEmoji(!showEmoji)}
           >
-            <FiSmile />
+            <FiSmile className="size-5" />
           </button>
 
           {showEmoji && (
-            <div className="emoji-picker">
-              <EmojiPicker
-                theme="dark"
-                onEmojiClick={onEmojiClick}
-              />
+            <div className="absolute bottom-full left-0 z-30 mb-2">
+              <EmojiPicker theme="dark" onEmojiClick={onEmojiClick} />
             </div>
           )}
-
         </div>
 
         {/* Attachment */}
-
         <button
-          className="action-btn"
+          className="grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
           onClick={chooseFile}
         >
-          <FiPaperclip />
+          <FiPaperclip className="size-5" />
         </button>
 
-        <input
-          type="file"
-          hidden
-          ref={fileInputRef}
-          onChange={handleFile}
-        />
+        <input type="file" hidden ref={fileInputRef} onChange={handleFile} />
 
         {/* Input */}
-
-        <div className="input-wrapper">
-
-          <input
-            value={text}
-            placeholder="Type a message..."
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSend();
-              }
-            }}
-          />
-
-        </div>
+        <input
+          value={text}
+          placeholder="Type a message..."
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSend();
+            }
+          }}
+          className="flex-1 rounded-full border border-input bg-input/30 px-4 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        />
 
         {/* Mic */}
-
-        <button className="action-btn">
-          <FiMic />
+        <button className="grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground">
+          <FiMic className="size-5" />
         </button>
 
         {/* Send */}
-
         <button
-          className="send-btn"
           onClick={handleSend}
+          className="grid size-9 place-items-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          <FiSend />
+          <FiSend className="size-4" />
         </button>
-
       </div>
     </>
   );

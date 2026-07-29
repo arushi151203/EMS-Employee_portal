@@ -4,7 +4,7 @@ import { Upload } from "lucide-react";
 import DocumentsTable from "../documents/DocumentsTable";
 import UploadModal from "../documents/UploadModal";
 import { getMyDocuments } from "@/employee/services/documentsService";
-import "../../css/documents.css";
+import { Button } from "@/components/ui/button";
 
 function DocumentsForm() {
   const [documents, setDocuments] = useState([]);
@@ -24,18 +24,16 @@ function DocumentsForm() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="text-sm text-muted-foreground">Loading...</p>;
   }
 
   return (
     <div>
-     <div className="documents-header">
-        <div>
-          <h2>My Documents</h2>
-        </div>
-        <button className="save-btn" onClick={() => setShowModal(true)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <Upload size={16} /> Upload
-        </button>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-base font-semibold">My Documents</h2>
+        <Button onClick={() => setShowModal(true)}>
+          <Upload className="size-4" /> Upload
+        </Button>
       </div>
 
       <DocumentsTable documents={documents} />

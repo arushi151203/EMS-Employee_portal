@@ -1,4 +1,3 @@
-import "./Payroll.css";
 import payrollData from "../data/payrollData";
 import {
   LineChart,
@@ -9,6 +8,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 function formatMoney(amount) {
   const sign = amount < 0 ? "-" : "";
@@ -21,121 +23,121 @@ function Payroll() {
   const { payslip, ytdSummary, pastPayslips, netPayTrend } = payrollData;
 
   return (
-    <div className="payroll-page">
-      <h1>Payroll</h1>
-      <p className="payroll-subtitle">View payslips and compensation details</p>
+    <div>
+      <h1 className="text-2xl font-bold">Payroll</h1>
+      <p className="mt-1 text-sm text-muted-foreground">View payslips and compensation details</p>
 
-      <div className="payroll-grid">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Left: Payslip card */}
-        <div className="card payslip-card">
-          <div className="payslip-header">
+        <Card className="p-6">
+          <div className="flex items-start justify-between">
             <div>
-              <p className="payslip-label">PAYSLIP</p>
-              <h2>{payslip.month}</h2>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                PAYSLIP
+              </p>
+              <h2 className="mt-1 text-xl font-semibold">{payslip.month}</h2>
             </div>
-            <button className="btn-primary download-btn">Download PDF</button>
+            <Button variant="outline" size="sm">Download PDF</Button>
           </div>
 
-          <div className="payslip-columns">
+          <div className="mt-5 grid grid-cols-2 gap-6">
             <div>
-              <p className="column-heading">EARNINGS</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                EARNINGS
+              </p>
               {payslip.earnings.map((item) => (
-                <div className="line-row" key={item.label}>
-                  <span>{item.label}</span>
+                <div className="flex justify-between py-1.5 text-sm" key={item.label}>
+                  <span className="text-muted-foreground">{item.label}</span>
                   <span>{formatMoney(item.amount)}</span>
                 </div>
               ))}
-              <div className="line-row total-row">
+              <div className="mt-1 flex justify-between border-t border-border pt-2 text-sm font-medium">
                 <span>Gross Total</span>
-                <span className="amount-positive">
-                  {formatMoney(payslip.grossTotal)}
-                </span>
+                <span className="text-success">{formatMoney(payslip.grossTotal)}</span>
               </div>
             </div>
 
             <div>
-              <p className="column-heading">DEDUCTIONS</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                DEDUCTIONS
+              </p>
               {payslip.deductions.map((item) => (
-                <div className="line-row" key={item.label}>
-                  <span>{item.label}</span>
-                  <span className="amount-negative">
-                    {formatMoney(item.amount)}
-                  </span>
+                <div className="flex justify-between py-1.5 text-sm" key={item.label}>
+                  <span className="text-muted-foreground">{item.label}</span>
+                  <span className="text-destructive">{formatMoney(item.amount)}</span>
                 </div>
               ))}
-              <div className="line-row total-row">
+              <div className="mt-1 flex justify-between border-t border-border pt-2 text-sm font-medium">
                 <span>Total Deductions</span>
-                <span className="amount-negative">
-                  {formatMoney(payslip.totalDeductions)}
-                </span>
+                <span className="text-destructive">{formatMoney(payslip.totalDeductions)}</span>
               </div>
             </div>
           </div>
 
-          <div className="net-pay-box">
+          <div className="mt-6 flex items-center justify-between rounded-xl bg-muted/40 p-4">
             <div>
-              <p className="net-pay-label">Net Pay</p>
-              <h2>{formatMoney(payslip.netPay)}</h2>
+              <p className="text-xs text-muted-foreground">Net Pay</p>
+              <h2 className="text-xl font-semibold">{formatMoney(payslip.netPay)}</h2>
             </div>
-            <div className="paid-on">
-              <p className="net-pay-label">Paid on</p>
-              <p>{payslip.paidOn}</p>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Paid on</p>
+              <p className="text-sm">{payslip.paidOn}</p>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Right: YTD Summary */}
-        <div className="card ytd-card">
-          <h3>YTD Summary</h3>
-          <div className="ytd-row">
-            <span>Gross Earned</span>
+        <Card className="p-6">
+          <h3 className="text-base font-semibold">YTD Summary</h3>
+
+          <div className="mt-3 flex justify-between border-b border-border py-1.5 text-sm">
+            <span className="text-muted-foreground">Gross Earned</span>
             <span>{formatMoney(ytdSummary.grossEarned)}</span>
           </div>
-          <div className="ytd-row">
-            <span>Total Deductions</span>
-            <span className="amount-negative">
-              {formatMoney(ytdSummary.totalDeductions)}
-            </span>
+          <div className="flex justify-between border-b border-border py-1.5 text-sm">
+            <span className="text-muted-foreground">Total Deductions</span>
+            <span className="text-destructive">{formatMoney(ytdSummary.totalDeductions)}</span>
           </div>
-          <div className="ytd-row">
-            <span>Net Received</span>
-            <span className="amount-positive">
-              {formatMoney(ytdSummary.netReceived)}
-            </span>
+          <div className="flex justify-between border-b border-border py-1.5 text-sm">
+            <span className="text-muted-foreground">Net Received</span>
+            <span className="text-success">{formatMoney(ytdSummary.netReceived)}</span>
           </div>
-          <div className="ytd-row">
-            <span>Taxes Paid</span>
-            <span className="amount-warning">
-              {formatMoney(ytdSummary.taxesPaid)}
-            </span>
+          <div className="flex justify-between py-1.5 text-sm">
+            <span className="text-muted-foreground">Taxes Paid</span>
+            <span className="text-warning">{formatMoney(ytdSummary.taxesPaid)}</span>
           </div>
 
-          <p className="past-payslips-heading">Past Payslips</p>
+          <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Past Payslips
+          </p>
           {pastPayslips.map((item) => (
-            <div className="line-row past-payslip-row" key={item.month}>
+            <div
+              className="flex cursor-pointer justify-between py-1.5 text-sm text-muted-foreground hover:text-foreground"
+              key={item.month}
+            >
               <span>{item.month}</span>
-              <span className="download-icon">⬇</span>
+              <span>⬇</span>
             </div>
           ))}
-        </div>
+        </Card>
       </div>
 
       {/* Bottom: Net Pay Trend chart */}
-      <div className="card trend-card">
-        <h3>Net Pay Trend — 2024</h3>
+      <Card className="mt-6 p-6">
+        <h3 className="text-base font-semibold">Net Pay Trend — 2024</h3>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={netPayTrend}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f2740" />
-            <XAxis dataKey="month" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+            <YAxis stroke="var(--muted-foreground)" />
             <Tooltip
-              contentStyle={{ background: "#131a2c", border: "1px solid #1f2740" }}
+              contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)" }}
             />
-            <Line type="monotone" dataKey="gross" stroke="#38bdf8" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="net" stroke="#3b82f6" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="gross" stroke="var(--info)" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="net" stroke="var(--primary)" strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
     </div>
   );
 }
