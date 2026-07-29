@@ -188,13 +188,13 @@ async function handleCheckOut() {
       {/* Buttons */}
       <div className="mt-5 flex w-full gap-3">
         <Button
-          className="flex-1"
-          variant={checkedIn ? "destructive" : "default"}
-          disabled={isProcessing || dayCompleted}
-          onClick={checkedIn ? handleCheckOut : handleCheckIn}
-        >
-          {isProcessing ? "..." : dayCompleted ? "Completed for Today" : (checkedIn ? "Check Out" : "Check In")}
-        </Button>
+  className={`flex-1 ${dayCompleted ? "bg-success/15 text-success hover:bg-success/15 disabled:opacity-100" : ""}`}
+  variant={checkedIn ? "destructive" : "default"}
+  disabled={isProcessing || dayCompleted}
+  onClick={checkedIn ? handleCheckOut : handleCheckIn}
+>
+  {isProcessing ? "..." : dayCompleted ? "Completed for Today" : (checkedIn ? "Check Out" : "Check In")}
+</Button>
 
         <Button variant="outline" disabled={!checkedIn} onClick={handleBreak}>
           <Coffee size={18} />

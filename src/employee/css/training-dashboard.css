@@ -174,16 +174,19 @@ cursor:pointer;
 }
 .stats-container{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:16px;
+  width:100%;
   margin-top:25px;
   margin-bottom:35px;
 }
 
 .stats-card{
+  width:100%;
+  min-width:0;
   background:#182235;
   border-radius:18px;
-  padding:22px;
+  padding:18px 20px;
   color:white;
   display:flex;
   justify-content:space-between;
@@ -246,10 +249,10 @@ cursor:pointer;
 }
 
 .category{
-    background:#2563eb;
     padding:5px 10px;
     border-radius:16px;
     font-size:11px;
+    color:white;
 }
 
 .status{

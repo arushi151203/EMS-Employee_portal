@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 
+const categoryColors = {
+  Technical: "bg-[#2563eb]",
+  "Soft skills": "bg-[#9333ea]",
+  Compliance: "bg-[#dc2626]",
+  Analytics: "bg-[#0891b2]",
+};
+
 function CourseCard({
   id,
   category,
@@ -11,7 +18,7 @@ function CourseCard({
   return (
     <div className="course-card">
       <div className="course-top">
-        <span className="category">{category}</span>
+        <span className={`category ${categoryColors[category] || "bg-[#2563eb]"}`}>{category}</span>
         <span className="status">{status}</span>
       </div>
 

@@ -14,7 +14,7 @@ function StatCard({
     danger: "bg-destructive/15 text-destructive"
   };
   const isCompact = variant === "compact";
-  return <div className={`rounded-2xl border border-border bg-card shadow-elegant ${isCompact ? "p-3.5" : "p-5"}`}>
+  return <div className={`rounded-2xl border border-border bg-card shadow-elegant ${isCompact ? "p-3.5" : "p-4"}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           {label}

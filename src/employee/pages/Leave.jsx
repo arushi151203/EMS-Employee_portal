@@ -223,7 +223,14 @@ export default function Leave() {
             <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
             <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
             <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
-            <Tooltip />
+            <Tooltip
+               contentStyle={{
+                background: "var(--popover)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                color: "var(--foreground)",
+               }}
+              />
             <Legend />
             {leaveTypes.map((type) => (
               <Bar key={type} dataKey={type} stackId="leave" fill={LEAVE_POLICY[type].color} />
