@@ -1,7 +1,4 @@
-.training-module,
-.training-module *{
-  margin:0;
-  padding:0;
+.training-module {
   box-sizing:border-box;
   font-family:'Segoe UI',sans-serif;
 }

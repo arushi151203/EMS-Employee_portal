@@ -175,12 +175,12 @@ async function handleCheckOut() {
 
       {/* Status */}
       <div
-        className={`mt-4 rounded-full px-3 py-1 text-xs font-medium ${
-          checkedIn ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
-        }`}
-      >
-        {checkedIn ? "Checked In" : "Not Checked In"}
-      </div>
+  className={`mt-4 rounded-full px-3 py-1 text-xs font-medium ${
+    dayCompleted || checkedIn ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+  }`}
+>
+  {dayCompleted ? "Completed" : checkedIn ? "Checked In" : "Not Checked In"}
+</div>
 
       {infoMessage && <p className="mt-2 text-xs text-warning">{infoMessage}</p>}
 

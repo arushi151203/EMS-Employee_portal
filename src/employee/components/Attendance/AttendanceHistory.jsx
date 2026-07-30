@@ -14,7 +14,7 @@ import { StatusPill } from "@/components/common/StatusPill";
 
 function AttendanceHistory({ refreshKey }) {
 
-  const employeeId = 1;
+  const employeeId = "EMP001";
   const [search] = useState("");
   const [attendance, setAttendance] = useState([]);
 
