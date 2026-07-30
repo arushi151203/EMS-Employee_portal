@@ -60,26 +60,17 @@ async function main() {
   ];
 
   for (const p of people) {
-    // --- Self-heal step 1 ---
-    // Some other employee_id may already be squatting on this email
-    // (e.g. a stray "Neha Verma / employee" row from an older/unrelated
-    // seed script). Since `email` is UNIQUE, that row must be cleared
-    // out first or the upsert below silently updates the wrong record.
     await db.query("DELETE FROM employees WHERE email = ? AND employee_id <> ?", [
       p.email,
       p.employee_id,
     ]);
 
-    // --- Self-heal step 2 ---
-    // This employee_id may already exist but with the WRONG email
-    // (e.g. HR101 previously renamed to a different address). Clear it
-    // so the upsert below can set the correct email cleanly.
     await db.query("DELETE FROM employees WHERE employee_id = ? AND email <> ?", [
       p.employee_id,
       p.email,
     ]);
 
-    // --- Upsert the correct row ---
+    
     await db.query(
       `INSERT INTO employees (employee_id, name, email, password_hash, role, department_id, designation, phone, date_of_joining, status, approval_status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, '2023-06-01', 'Active', 'Approved')
@@ -92,15 +83,12 @@ async function main() {
     console.log(`✓ ${p.role.toUpperCase()}: ${p.name} (${p.email})`);
   }
 
-  // Remove the old second employee account (Priya Sharma) — only one
-  // account per role is wanted now.
   await db.query("DELETE FROM employee_documents WHERE employee_id = 'EMP102'");
   await db.query("DELETE FROM leave_requests WHERE employee_id = 'EMP102'");
   await db.query("DELETE FROM attendance WHERE employee_id = 'EMP102'");
   await db.query("DELETE FROM employee_profile WHERE employee_id = 'EMP102'");
   await db.query("DELETE FROM employees WHERE employee_id = 'EMP102'");
 
-  // Approve any other pending accounts too (e.g. earlier demo seed)
   await db.query("UPDATE employees SET approval_status='Approved' WHERE approval_status='Pending'");
 
   // ---------------- Profile details ----------------
@@ -127,6 +115,37 @@ async function main() {
     );
   }
   console.log("✓ Profile details added");
+
+  // ---------------- Skills ----------------
+await db.query("DELETE FROM employee_skills WHERE employee_id = 'EMP101'");
+const skills = [
+  ["EMP101", "JavaScript", 85],
+  ["EMP101", "React", 80],
+  ["EMP101", "Node.js", 70],
+  ["EMP101", "SQL", 65],
+];
+for (const [empId, skillName, level] of skills) {
+  await db.query(
+    `INSERT INTO employee_skills (employee_id, skill_name, level) VALUES (?, ?, ?)`,
+    [empId, skillName, level]
+  );
+}
+console.log("✓ Skills added");
+
+// ---------------- Emergency Contacts ----------------
+await db.query("DELETE FROM employee_emergency_contacts WHERE employee_id = 'EMP101'");
+const contacts = [
+  ["EMP101", "Primary", "Anjali Kapoor", "Spouse", "+91 98765 11111", "anjali.kapoor@example.com"],
+  ["EMP101", "Secondary", "Rakesh Kapoor", "Father", "+91 98765 22222", "rakesh.kapoor@example.com"],
+];
+for (const [empId, type, name, relation, phone, email] of contacts) {
+  await db.query(
+    `INSERT INTO employee_emergency_contacts (employee_id, contact_type, contact_name, relationship, phone, email)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [empId, type, name, relation, phone, email]
+  );
+}
+console.log("✓ Emergency contacts added");
 
   // ---------------- Attendance (last 7 workdays) ----------------
   await db.query("DELETE FROM attendance WHERE employee_id = 'EMP101'");
