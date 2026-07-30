@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const employeeId = "EMP001";
 
-function AttendanceStatus() {
+function AttendanceStatus({ onAttendanceChange }) {
   const [attendance, setAttendance] = useState(null);
   const [checkedIn, setCheckedIn] = useState(false);
   const [onBreak, setOnBreak] = useState(false);
@@ -83,6 +83,7 @@ const handleCheckIn = async () => {
     }
 
     loadAttendance();
+    onAttendanceChange?.();
   } catch (error) {
     console.error(error);
   } finally {
@@ -154,6 +155,7 @@ async function handleCheckOut() {
       setCheckOutTime(new Date().toLocaleTimeString());
 
       loadAttendance();
+      onAttendanceChange?.();
 
     } catch (error) {
       console.error("Check out failed:", error);

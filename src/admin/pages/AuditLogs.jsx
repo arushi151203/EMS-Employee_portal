@@ -2,11 +2,22 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Search, Download } from "lucide-react";
 import { auditLogs } from "../data/auditLogsData";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  DataTable,
+  DataTableHead,
+  DataTableBody,
+  DataTableRow,
+  DataTableHeadCell,
+  DataTableCell,
+} from "@/components/ui/data-table";
 
 const severityStyles = {
-  Info: "bg-blue-500/15 text-blue-400",
-  Warning: "bg-yellow-500/15 text-yellow-400",
-  Critical: "bg-red-500/15 text-red-400",
+  Info: "bg-primary/15 text-primary",
+  Warning: "bg-warning/15 text-warning",
+  Critical: "bg-destructive/15 text-destructive",
 };
 
 function AuditLogs() {
@@ -45,12 +56,9 @@ function AuditLogs() {
           <h1 className="text-2xl font-bold">Audit Logs</h1>
           <p className="text-sm text-muted-foreground mt-1">Monitor all administrative activities</p>
         </div>
-        <button
-          onClick={exportCSV}
-          className="flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90"
-        >
+        <Button onClick={exportCSV}>
           <Download size={16} /> Export Logs
-        </button>
+        </Button>
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -64,50 +72,51 @@ function AuditLogs() {
             className="flex-1 bg-transparent outline-none text-sm"
           />
         </div>
-        <select
-          value={severity}
-          onChange={(e) => setSeverity(e.target.value)}
-          className="rounded-lg border border-border bg-card px-3 py-2 text-sm w-48"
-        >
-          <option value="All">All Severity</option>
-          <option value="Info">Info</option>
-          <option value="Warning">Warning</option>
-          <option value="Critical">Critical</option>
-        </select>
+        <Select value={severity} onValueChange={setSeverity}>
+          <SelectTrigger className="w-48" />
+          <SelectContent>
+            <SelectItem value="All">All Severity</SelectItem>
+            <SelectItem value="Info">Info</SelectItem>
+            <SelectItem value="Warning">Warning</SelectItem>
+            <SelectItem value="Critical">Critical</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-muted/50 text-left">
-              <th className="p-3 font-medium">User</th>
-              <th className="p-3 font-medium">Action</th>
-              <th className="p-3 font-medium">Target</th>
-              <th className="p-3 font-medium">Severity</th>
-              <th className="p-3 font-medium">Timestamp</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Card className="overflow-hidden p-0">
+        <DataTable className="border-0">
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableHeadCell>User</DataTableHeadCell>
+              <DataTableHeadCell>Action</DataTableHeadCell>
+              <DataTableHeadCell>Target</DataTableHeadCell>
+              <DataTableHeadCell>Severity</DataTableHeadCell>
+              <DataTableHeadCell>Timestamp</DataTableHeadCell>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
             {filteredLogs.length > 0 ? (
               filteredLogs.map((log) => (
-                <tr key={log.id} className="border-t border-border">
-                  <td className="p-3">{log.user}</td>
-                  <td className="p-3">{log.action}</td>
-                  <td className="p-3">{log.target}</td>
-                  <td className="p-3">
+                <DataTableRow key={log.id}>
+                  <DataTableCell>{log.user}</DataTableCell>
+                  <DataTableCell>{log.action}</DataTableCell>
+                  <DataTableCell>{log.target}</DataTableCell>
+                  <DataTableCell>
                     <span className={`text-xs font-medium px-3 py-1 rounded-full ${severityStyles[log.severity]}`}>{log.severity}</span>
-                  </td>
-                  <td className="p-3 text-muted-foreground">{log.time}</td>
-                </tr>
+                  </DataTableCell>
+                  <DataTableCell className="text-muted-foreground">{log.time}</DataTableCell>
+                </DataTableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan="5" className="text-center p-8 text-muted-foreground">No audit logs found.</td>
-              </tr>
+              <DataTableRow>
+                <DataTableCell className="text-center text-muted-foreground" colSpan={5}>
+                  No audit logs found.
+                </DataTableCell>
+              </DataTableRow>
             )}
-          </tbody>
-        </table>
-      </div>
+          </DataTableBody>
+        </DataTable>
+      </Card>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/data-table";
 import { StatusPill } from "@/components/common/StatusPill";
 
-function AttendanceHistory() {
+function AttendanceHistory({ refreshKey }) {
 
   const employeeId = 1;
   const [search] = useState("");
@@ -38,7 +38,7 @@ function AttendanceHistory() {
       }
     };
     loadHistory();
-  }, []);
+  }, [refreshKey]);
 
   return (
     <Card className="overflow-hidden p-0">

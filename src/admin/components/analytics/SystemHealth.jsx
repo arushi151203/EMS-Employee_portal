@@ -1,18 +1,17 @@
 import HealthCard from "./HealthCard";
 import { systemHealth } from "../../data/analyticsData";
+import { Button } from "@/components/ui/button";
 
 function SystemHealth() {
   return (
-    <div className="bg-[#111827] border border-slate-700 rounded-2xl p-6 mt-8">
+    <div className="bg-card border border-border rounded-2xl p-6 mt-8">
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-white text-3xl font-bold">
+        <h2 className="text-base font-semibold">
           System Health
         </h2>
 
-        <button className="text-slate-400 hover:text-white">
-          Refresh
-        </button>
+        <Button variant="outline" size="sm">Refresh</Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

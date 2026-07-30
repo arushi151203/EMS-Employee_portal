@@ -16,10 +16,10 @@ export default function Training() {
         <p>Courses, certifications, and learning paths</p>
       </div>
       <div className="stats-container">
-        <StatCard label="COURSES ENROLLED" value="4" icon={<BsBook size={18} />} tone="info" />
-        <StatCard label="COMPLETED" value="1" icon={<BsCheckCircle size={18} />} tone="success" />
-        <StatCard label="HOURS LEARNED" value="18.5h" icon={<BsClock size={18} />} tone="violet" />
-        <StatCard label="CERTIFICATES" value="2" icon={<BsAward size={18} />} tone="warning" />
+        <StatCard label="COURSES ENROLLED" value="4" icon={<BsBook size={18} />} tone="info" variant="compact" />
+        <StatCard label="COMPLETED" value="1" icon={<BsCheckCircle size={18} />} tone="success" variant="compact" />
+        <StatCard label="HOURS LEARNED" value="18.5h" icon={<BsClock size={18} />} tone="violet" variant="compact" />
+        <StatCard label="CERTIFICATES" value="2" icon={<BsAward size={18} />} tone="warning" variant="compact" />
       </div>
       <h2 className="section-title">Current Courses</h2>
       <div className="course-container">

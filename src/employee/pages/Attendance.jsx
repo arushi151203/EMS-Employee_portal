@@ -1,8 +1,14 @@
+import { useState, useCallback } from "react";
 import AttendanceStatus from "../components/Attendance/AttendanceStatus";
 import AttendanceCalendar from "../components/Attendance/AttendanceCalendar";
 import AttendanceHistory from "../components/Attendance/AttendanceHistory";
 
 function Attendance() {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleAttendanceChange = useCallback(() => {
+    setRefreshKey((k) => k + 1);
+  }, []);
+
   return (
     <div>
       <div className="mb-6">
@@ -13,12 +19,12 @@ function Attendance() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <AttendanceStatus />
-        <AttendanceCalendar />
+        <AttendanceStatus onAttendanceChange={handleAttendanceChange} />
+        <AttendanceCalendar refreshKey={refreshKey} />
       </div>
 
       <div className="mt-6">
-        <AttendanceHistory />
+        <AttendanceHistory refreshKey={refreshKey} />
       </div>
     </div>
   );

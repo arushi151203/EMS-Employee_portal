@@ -16,7 +16,7 @@ const dotStyles = {
   late: "bg-warning",
 };
 
-function AttendanceCalendar() {
+function AttendanceCalendar({ refreshKey }) {
 
   const employeeId = "EMP001";
   const today = new Date();
@@ -45,7 +45,7 @@ function AttendanceCalendar() {
       }
     };
     loadCalendar();
-  }, [month, year]);
+  }, [month, year, refreshKey]);
 
   // -----------Convert DB rows to lookup-----------
 

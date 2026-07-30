@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Users, Briefcase, CalendarClock, CheckCircle2 } from "lucide-react";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusPill } from "@/components/common/StatusPill";
@@ -27,7 +28,7 @@ function Recruitment() {
           <h1 className="text-2xl font-bold">Recruitment</h1>
           <p className="text-sm text-muted-foreground mt-1">Job openings and candidate pipeline</p>
         </div>
-        <Button>+ Post Job</Button>
+        <Button onClick={() => toast("Post Job requires backend integration")}>+ Post Job</Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">

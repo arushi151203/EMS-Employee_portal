@@ -2,6 +2,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { HardDriveDownload, Undo2, AlertTriangle } from "lucide-react";
 
+import { Card } from "@/components/ui/card";
+import { Field as FieldWrap, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 function Toggle({ label, defaultOn }) {
   const [on, setOn] = useState(!!defaultOn);
   return (
@@ -20,13 +25,10 @@ function Toggle({ label, defaultOn }) {
 
 function Field({ label, defaultValue }) {
   return (
-    <div>
-      <label className="text-xs text-muted-foreground">{label}</label>
-      <input
-        defaultValue={defaultValue}
-        className="mt-1 w-full rounded-lg border border-border bg-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/60"
-      />
-    </div>
+    <FieldWrap>
+      <FieldLabel>{label}</FieldLabel>
+      <Input defaultValue={defaultValue} />
+    </FieldWrap>
   );
 }
 
@@ -39,7 +41,7 @@ function SystemSettings() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <Card className="p-6 space-y-4">
           <h2 className="text-lg font-semibold mb-2">Company Configuration</h2>
           <Field label="Company Name" defaultValue="Nexus Technologies" />
           <Field label="Industry" defaultValue="Technology" />
@@ -47,61 +49,54 @@ function SystemSettings() {
           <Field label="Fiscal Year Start" defaultValue="January" />
           <Field label="Default Currency" defaultValue="USD" />
           <Field label="Work Week" defaultValue="Mon–Fri" />
-          <button
-            onClick={() => toast.success("Configuration saved (mock)")}
-            className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90"
-          >
+          <Button onClick={() => toast.success("Configuration saved (mock)")}>
             Save Configuration
-          </button>
-        </div>
+          </Button>
+        </Card>
 
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <Card className="p-6">
             <h2 className="text-lg font-semibold mb-1">Data Backup</h2>
             <p className="text-xs text-muted-foreground mb-4">Last backup: Jul 2, 2024 at 03:00 UTC</p>
             <div className="flex gap-3">
-              <button
-                onClick={() => toast.success("Backup started (mock)")}
-                className="flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-3 py-2 text-sm font-medium hover:opacity-90"
-              >
+              <Button onClick={() => toast.success("Backup started (mock)")}>
                 <HardDriveDownload size={15} /> Backup Now
-              </button>
-              <button
-                onClick={() => toast("Restore requires backend integration")}
-                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent"
-              >
+              </Button>
+              <Button variant="outline" onClick={() => toast("Restore requires backend integration")}>
                 <Undo2 size={15} /> Restore
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
 
-          <div className="rounded-2xl border border-border bg-card p-6 divide-y divide-border">
+          <Card className="p-6 divide-y divide-border">
             <h2 className="text-lg font-semibold mb-1 pb-3">System Toggles</h2>
             <Toggle label="Maintenance Mode" />
             <Toggle label="Email Notifications" defaultOn />
             <Toggle label="Two-Factor Required" defaultOn />
             <Toggle label="Audit Logging" defaultOn />
             <Toggle label="API Access" defaultOn />
-          </div>
+          </Card>
 
-          <div className="rounded-2xl border border-destructive/30 bg-card p-6">
+          <Card className="border-destructive/30 p-6">
             <h2 className="text-lg font-semibold mb-1">Danger Zone</h2>
             <p className="text-xs text-muted-foreground mb-4">These actions are irreversible. Proceed with caution.</p>
             <div className="flex gap-3">
-              <button
+              <Button
+                variant="outline"
+                className="border-destructive/40 text-destructive hover:bg-destructive/10"
                 onClick={() => toast.error("Purge Test Data requires backend integration")}
-                className="flex items-center gap-2 rounded-lg border border-destructive/40 text-destructive px-3 py-2 text-sm hover:bg-destructive/10"
               >
                 <AlertTriangle size={15} /> Purge Test Data
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
+                className="border-destructive/40 text-destructive hover:bg-destructive/10"
                 onClick={() => toast.error("Reset All Permissions requires backend integration")}
-                className="flex items-center gap-2 rounded-lg border border-destructive/40 text-destructive px-3 py-2 text-sm hover:bg-destructive/10"
               >
                 <AlertTriangle size={15} /> Reset All Permissions
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>

@@ -17,11 +17,11 @@ function Reports() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-5xl font-bold text-white">
+          <h1 className="text-2xl font-bold">
             Reports & Analytics
           </h1>
 
-          <p className="text-slate-400 mt-2">
+          <p className="text-muted-foreground mt-2">
             Interactive data reports across all modules
           </p>
         </div>

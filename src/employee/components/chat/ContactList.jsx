@@ -4,6 +4,19 @@ import { FiSearch } from "react-icons/fi";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
+const AVATAR_COLORS = [
+  "bg-primary text-primary-foreground",
+  "bg-info text-info-foreground",
+  "bg-success text-success-foreground",
+  "bg-warning text-warning-foreground",
+  "bg-chart-5 text-primary-foreground",
+];
+
+function avatarColor(id) {
+  const idx = String(id).split("").reduce((sum, c) => sum + c.charCodeAt(0), 0);
+  return AVATAR_COLORS[idx % AVATAR_COLORS.length];
+}
+
 function ContactList({ contacts, selectedContact, setSelectedContact }) {
   const [search, setSearch] = useState("");
 
@@ -54,7 +67,7 @@ function ContactList({ contacts, selectedContact, setSelectedContact }) {
             >
               <div className="relative shrink-0">
                 <Avatar>
-                  <AvatarFallback>{contact.avatar}</AvatarFallback>
+                  <AvatarFallback className={avatarColor(contact.id)}>{contact.avatar}</AvatarFallback>
                 </Avatar>
                 <span
                   className={`absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-card ${

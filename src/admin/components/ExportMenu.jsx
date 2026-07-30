@@ -7,6 +7,8 @@ import {
   Printer,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 function ExportMenu({
   onPDF,
   onExcel,
@@ -18,23 +20,20 @@ function ExportMenu({
   return (
     <div className="relative">
 
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 bg-[#1E293B] hover:bg-[#334155] border border-slate-700 text-white px-5 py-3 rounded-xl"
-      >
+      <Button variant="outline" onClick={() => setOpen(!open)}>
         <Download size={18} />
         Export
-      </button>
+      </Button>
 
       {open && (
-        <div className="absolute right-0 mt-3 w-56 bg-[#111827] border border-slate-700 rounded-xl shadow-xl z-50">
+        <div className="absolute right-0 mt-3 w-56 bg-card border border-border rounded-xl shadow-xl z-50">
 
           <button
             onClick={() => {
               onPDF();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700 text-white"
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted text-foreground"
           >
             <FileText size={18} />
             Export as PDF
@@ -45,7 +44,7 @@ function ExportMenu({
               onExcel();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700 text-white"
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted text-foreground"
           >
             <FileSpreadsheet size={18} />
             Export as Excel
@@ -56,7 +55,7 @@ function ExportMenu({
               onCSV();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700 text-white"
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted text-foreground"
           >
             <File size={18} />
             Export as CSV
@@ -67,7 +66,7 @@ function ExportMenu({
               onPrint();
               setOpen(false);
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700 text-white"
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted text-foreground"
           >
             <Printer size={18} />
             Print Report

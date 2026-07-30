@@ -1,4 +1,4 @@
-import StatCard from "../components/analytics/StatCard";
+import { StatCard } from "@/components/common/StatCard";
 import EmployeeGrowthChart from "../components/analytics/EmployeeGrowthChart";
 import PayrollChart from "../components/analytics/PayrollChart";
 import SystemHealth from "../components/analytics/SystemHealth";
@@ -10,11 +10,11 @@ function Analytics() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white">
+        <h1 className="text-2xl font-bold">
           Analytics
         </h1>
 
-        <p className="text-slate-400 mt-2">
+        <p className="text-muted-foreground mt-2">
           Company-wide metrics and insights
         </p>
       </div>
@@ -24,9 +24,9 @@ function Analytics() {
         {stats.map((card, index) => (
           <StatCard
             key={index}
-            title={card.title}
+            label={card.title}
             value={card.value}
-            subtitle={card.subtitle}
+            sub={card.subtitle}
             icon={card.icon}
           />
         ))}

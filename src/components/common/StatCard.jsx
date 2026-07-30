@@ -21,7 +21,7 @@ function StatCard({
         </div>
         {icon && <div className={`grid place-items-center rounded-lg ${toneMap[tone]} ${isCompact ? "h-7 w-7" : "h-8 w-8"}`}>{icon}</div>}
       </div>
-      <div className={`mt-4 font-semibold tracking-tight ${isCompact ? "text-2xl" : "text-3xl"}`}>{value}</div>
+      <div className={`font-semibold tracking-tight ${isCompact ? "mt-2 text-xl" : "mt-4 text-3xl"}`}>{value}</div>
       {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
     </div>;
 }
