@@ -50,22 +50,24 @@ Since the backend-connected modules already establish the pattern (service file 
 5. HR Recruitment, remaining Admin panels
 
 ---
-
 ## 📁 Project Structure
 
-├── src/
-│ ├── employee/ # Employee portal (pages, components, services)
-│ ├── hr/ # HR portal
-│ ├── admin/ # Admin portal
-│ ├── components/ # Shared UI components (shadcn-based)
-│ └── lib/ # Auth, utils, shared store
-├── backend/
-│ ├── controller/ # Route handlers + route definitions
-│ ├── middleware/ # Auth verification, role guards, file upload
-│ ├── uploads/ # Uploaded document storage
-│ ├── db.js # MySQL connection pool
-│ ├── schema.sql # Database schema
-│ └── server.js # Express app entry
+```
+src/
+├── employee/       # Employee portal (pages, components, services)
+├── hr/             # HR portal
+├── admin/          # Admin portal
+├── components/     # Shared UI components (shadcn-based)
+└── lib/            # Auth, utils, shared store
+
+backend/
+├── controller/     # Route handlers + route definitions
+├── middleware/      # Auth verification, role guards, file upload
+├── uploads/         # Uploaded document storage
+├── db.js            # MySQL connection pool
+├── schema.sql       # Database schema
+└── server.js        # Express app entry
+```
 
 
 ---
